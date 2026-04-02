@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/onboarding/onboarding",
+    "pages/home/home",
+    "pages/discovery/discovery",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F5F3ED",
+    "navigationBarTitleText": "SW 同频",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

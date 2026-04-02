@@ -1,0 +1,166 @@
+<!--pages/home/home.wxml-->
+<view class="container" style="min-height: {{windowHeight}}px;">
+  <!-- 最底层背景: 极简奶油色渐变 -->
+  <view class="bg-gradient"></view>
+
+  <!-- 顶部导航区 -->
+  <view class="header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="header-content">
+      <view class="date-location">
+        <text class="date-text">4月15日  星期二</text>
+        <text class="location-text">阿姆斯特丹</text>
+      </view>
+      <!-- 右侧装饰网格图标 -->
+      <view class="grid-icon">
+        <view class="grid-dot"></view><view class="grid-dot"></view>
+        <view class="grid-dot"></view><view class="grid-dot"></view>
+        <view class="grid-dot"></view><view class="grid-dot"></view>
+        <view class="grid-dot"></view><view class="grid-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y="true" enable-flex class="main-content">
+    
+    <!-- 顶部横向好友墙/同频人列表 -->
+    <scroll-view scroll-x="true" class="stories-list" show-scrollbar="false">
+      <!-- 个人入口 -->
+      <view class="story-item">
+        <view class="avatar-wrap you-wrap">
+          <image class="avatar-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKIsQ_bqFzmWxDSDkiZxPO2wAgWkowGYIPO4QTcuJtrO_sZjy0vXIEH1v_IzEUuvE_MstRGn0ENMLnF5L2ZeoRnB0UdWrIdPqBSjYMPZxI9YbWyRNotG8jewPQeF_UXwfxGe52oL8DVzjv6kx3-eOQ7g8BR28FK-whVhDgDX6Yw9c9intyLOHfgDXnjdwJF8aOtUZ9TSTQg3E4UuDDbI4utTxXxxtUjdgDmFuZzO3eQznb6Wxt0K_uYOa2MWd63rKUaVmx58SBfww" mode="aspectFill"></image>
+          <view class="badge black-badge"></view>
+        </view>
+        <text class="name-text">你</text>
+      </view>
+      <!-- 推荐匹配者 -->
+      <view class="story-item" wx:for="{{recommendUsers}}" wx:key="id">
+        <view class="avatar-wrap">
+          <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view class="badge"></view>
+        </view>
+        <text class="name-text">{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 分类标签 TabBar -->
+    <scroll-view scroll-x="true" class="category-tabs" show-scrollbar="false">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="index"
+        class="tab-item {{item === currentTab ? 'active' : ''}}"
+        bindtap="switchTab"
+        data-tab="{{item}}">
+        <text>{{item}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 核心卡片容器 -->
+    <view class="card-wrapper">
+      <view 
+        class="card-inner" 
+        style="transform: translateX({{cardTranslateX}}px) translateY({{cardTranslateY}}px) rotate({{cardRotate}}deg); transition: {{cardTransition}};"
+        catchtouchstart="touchStart"
+        catchtouchmove="touchMove"
+        catchtouchend="touchEnd">
+        
+        <!-- 卡片头部: 用户信息 -->
+        <view class="card-header">
+          <view class="user-info">
+            <image src="{{currentCard.user.avatar}}" class="card-avatar" mode="aspectFill"></image>
+            <view class="user-meta">
+              <text class="profile-name">{{currentCard.user.name}}的档案</text>
+              <text class="profile-tags">观点 · {{currentCard.tags}}</text>
+            </view>
+          </view>
+          <text class="temperature-text">1°</text>
+        </view>
+
+        <!-- 卡片正文: 观点文字 -->
+        <view class="card-body">
+          <text class="opinion-text">“{{currentCard.content}}”</text>
+        </view>
+
+        <!-- 卡片底部: 同频数据条 -->
+        <view class="card-footer">
+          <view class="vote-labels">
+            <text class="label-left">认同</text>
+            <text class="label-right">不认同</text>
+          </view>
+          
+          <view class="progress-bar-container">
+            <view class="progress-bar-bg">
+              <view class="progress-bar-fill" style="width: {{currentCard.agreePercent}}%;"></view>
+            </view>
+            <view class="avatars-agree" style="left: 0;">
+              <image wx:for="{{currentCard.agreeAvatars}}" wx:key="index" src="{{item}}" class="tiny-avatar"></image>
+            </view>
+            <view class="avatars-disagree" style="right: 0;">
+              <image src="{{currentCard.disagreeAvatar}}" class="tiny-avatar single"></image>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部划动动作按钮 -->
+    <view class="action-buttons-wrapper">
+      <!-- 左划/不认同按钮 -->
+      <view class="action-col" bindtap="forceSwipeLeft">
+        <view class="circle-btn">
+          <image src="/assets/icons/close.svg" style="width: 60rpx; height: 60rpx;"></image>
+        </view>
+        <view class="action-text-wrapper">
+          <text class="action-hint">左滑</text>
+          <text class="action-main">不认同</text>
+        </view>
+      </view>
+      
+      <!-- AI & 评论功能（融入居中） -->
+      <view class="center-actions">
+         <view class="ai-comment-btn" bindtap="openAICommentDrawer">
+             <image src="/assets/icons/mic.svg" style="width: 50rpx; height: 50rpx;"></image>
+         </view>
+      </view>
+
+      <!-- 右划/认同按钮 -->
+      <view class="action-col" bindtap="forceSwipeRight">
+        <view class="circle-btn">
+          <image src="/assets/icons/circle.svg" style="width: 70rpx; height: 70rpx;"></image>
+        </view>
+        <view class="action-text-wrapper">
+          <text class="action-hint">右滑</text>
+          <text class="action-main">认同</text>
+        </view>
+      </view>
+    </view>
+    
+  </scroll-view>
+
+  <!-- 底部毛玻璃导航条 (STORIES/CARDS/PROFILE 中文化) -->
+  <view class="bottom-nav">
+    <view class="nav-container">
+      <view class="nav-item" bindtap="goToDiscovery">
+        <image src="/assets/icons/forum.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
+        <text class="nav-text">真心话</text>
+      </view>
+      <view class="nav-item active">
+        <image src="/assets/icons/home_cards.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx;"></image>
+        <text class="nav-text">首页卡片</text>
+      </view>
+      <view class="nav-item" bindtap="goToProfile">
+        <image src="/assets/icons/person.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
+        <text class="nav-text">我的档案</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上滑次数耗尽弹窗 -->
+  <view class="modal-mask" wx:if="{{showLimitModal}}" catchtouchmove="preventTouchMove">
+    <view class="modal-box">
+      <text class="modal-title">次数用尽</text>
+      <text class="modal-desc">今日基础用户上滑划过功能 (5次) 已用尽，升级三观库解锁无限划卡功能。</text>
+      <button class="modal-btn-primary" bindtap="closeModal">确认</button>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,145 @@
+<!-- pages/profile/profile.wxml -->
+<view class="page-wrapper" style="min-height: {{windowHeight}}px;">
+<scroll-view scroll-y="true" class="container" style="height: {{windowHeight}}px; background: linear-gradient(180deg, #F5F3ED 0%, #E0E4E1 100%);">
+
+  <view class="header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="header-inner">
+      <view class="icon-btn"><text style="font-size: 40rpx; font-weight: 300;">☰</text></view>
+      <text class="logo-text">Same Wavelength</text>
+      <view class="avatar-wrap-small">
+        <image class="avatar-small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt3naLQEnCWKVteeUGkKIuzOacHdDOhl8PJ7igG8HG7pVMRO-IF0FElwMYp8qwhGkIWQ8FurC1d_5V7Kh5hmXwtNl3_4C4ygR6uNysFWWXqCKgEIJOZm4d4KDhkrgHNImge1TIERx1_yakuYNKv3-OLyneSEXLzPqOE15pNSZWJ9x721kuzWtr93I26hQMKP4VcaIVKU5EKMVUZ1FZsX2OFWNUP4n5USY_LWNbUQ3yQCjvc82S0teyitLTKXgz3uoTJR4LJDg2Z-8"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="main-content">
+    
+    <!-- Profile Header -->
+    <view class="profile-header">
+      <view class="big-avatar-wrap">
+        <image class="big-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt3naLQEnCWKVteeUGkKIuzOacHdDOhl8PJ7igG8HG7pVMRO-IF0FElwMYp8qwhGkIWQ8FurC1d_5V7Kh5hmXwtNl3_4C4ygR6uNysFWWXqCKgEIJOZm4d4KDhkrgHNImge1TIERx1_yakuYNKv3-OLyneSEXLzPqOE15pNSZWJ9x721kuzWtr93I26hQMKP4VcaIVKU5EKMVUZ1FZsX2OFWNUP4n5USY_LWNbUQ3yQCjvc82S0teyitLTKXgz3uoTJR4LJDg2Z-8"></image>
+        <view class="avatar-ring"></view>
+      </view>
+
+      <text class="user-name">林深处的麋鹿</text>
+      <view class="badges">
+        <view class="badge white-badge"><text>♀ 24</text></view>
+        <view class="badge black-badge"><text>INFJ-T</text></view>
+      </view>
+      <text class="user-desc">"在喧嚣的世界寻找同频的声音，慢热却也深邃。"</text>
+    </view>
+
+    <!-- Stats -->
+    <view class="stats-glass">
+      <view class="stat-item"><text class="stat-num">1.2k</text><text class="stat-label">访客</text></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><text class="stat-num">458</text><text class="stat-label">粉丝</text></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><text class="stat-num">89</text><text class="stat-label">关注</text></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><text class="stat-num">2.4k</text><text class="stat-label">互动</text></view>
+    </view>
+
+    <!-- Documents -->
+    <view class="docs-row">
+      <view class="doc-card">
+        <text style="font-size: 56rpx;">📝</text>
+        <view>
+          <text class="doc-title">My Preferences</text>
+          <text class="doc-sub">偏好设定</text>
+        </view>
+      </view>
+      <view class="doc-card">
+        <text style="font-size: 56rpx;">📋</text>
+        <view>
+          <text class="doc-title">My Values Report</text>
+          <text class="doc-sub">价值观报告</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Premium Banner -->
+    <view class="premium-banner">
+      <text class="premium-title">Unlocking high-resonance matches</text>
+      <text class="premium-sub">开启高频率深度匹配，遇见对的人</text>
+      <button class="premium-btn">立即升级</button>
+      <text class="premium-bg-icon">✦</text>
+    </view>
+
+    <scroll-view scroll-x="true" class="price-cards" show-scrollbar="false">
+      <view class="price-card">
+        <text class="duration">1 个月</text>
+        <text class="price">¥28</text>
+        <text class="daily">¥0.93/天</text>
+      </view>
+      <view class="price-card hot">
+        <view class="hot-tag">最热门</view>
+        <text class="duration">3 个月</text>
+        <text class="price">¥68</text>
+        <text class="daily">¥0.75/天</text>
+      </view>
+      <view class="price-card">
+        <text class="duration">12 个月</text>
+        <text class="price">¥198</text>
+        <text class="daily">¥0.54/天</text>
+      </view>
+    </scroll-view>
+
+    <!-- Photo Wall -->
+    <view class="section">
+      <view class="section-top">
+        <text class="sec-title">Photo Wall</text>
+        <text class="sec-meta">9 PHOTOS</text>
+      </view>
+      <view class="photo-grid">
+        <image class="grid-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBewnbxR7mF0K2rwBLl60t-iCriIqFeDsLNQL5unlZtShWW40FA7k1H34_SrzMd2z0lLxs-UTP8s3HrOYBQ2mYsBKUaGuGFYL2JfFmALS9clWisQlwygoOQAA48Sc-Cp5PCYBkfhRfFIi_FgRsvPD-3QcUot4oHj9g9hR0KJfsQLYJAoV7RjfX__Im5Vob9D7GwbpD4maZfZkMbp3CnuMgKzapA0y4LOXbfpLrDeMQ8Gyzwtk5nHZ0gI-N1h8cuSAkyCI6KNEfxOjc"></image>
+        <image class="grid-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdIBTK3jDhWxbutadRn6EnNWM1eiHq9E70MmLWcDsSl-VfdjIQCfVGmvkPg3sRUgYb4os92bKVZWlg74VaMEQZ02m_Ff3PN8dGQpU_BCWGJyYUSpdobvbn7u56fNZe6Z3pgdVDbQSOjNIA6rLtVw6LUq5bw_JH8XCo9U49KBNwuS2pOnYXjuonr79cxCGktl6sRf_If199c2ODkdwgLDGHcc1dpM_3DoCc_DlG5WYRdEnKvhhe8MHa2Hs5uyZ6mT_QmR8oL2JZODk"></image>
+        <image class="grid-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEhR6RMhGqz3JGjKHyq-HXUrU5ATcEx19pgN1u5sJPTuvkxUXU4kbTPbP4PO2hs6uqmGbSTePlgvItORnBMxfF2JvGC-BrZf1j2VC0f2R9g4OhYdD4JrU6LpNMgxrf3H2jrlEFqWIxXQCawrSbkaKmkexed6R3r-2j-5l0CN69EX5P03RVZEEDZPhd8VUUd_VJf_V-V3xpYSdbRj1hsdXco1ZblN7Z-dQNBci1A6UmSWgSWd3BN82WlhEn-th3m1jAEzMv_Vd15p8"></image>
+        <image class="grid-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHvVvWR_-YsXCc91DM-W4sb3SU0g7lkcg5n2zlnSpYKE2DutzqPaf-xPLrtSQ55oGELnH3RAQCdqmvJHIBQQh0YXKUH8jb9q1GxAARKJKnjsOig-stqhhna7G6qC888gnNY_eIqpWnN6zbP4nLnWoZ1FcsZJEb_1_IJZzxujtcvTknSu40DfyAlkTHt4XZWqJRM1NEeXEWddNah_cdglU9QlFdA1fFEGc8EwsHHsZd-slJfk5B8L-tzDNQyJKfD2qjdrCCzskDDgY"></image>
+        <image class="grid-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9BtGXpTAnDW0TuyH_WXu1uKm-m0nIPou7fPZyhqw8TxCRDLAD13e8YoyrOkuz5Go_Ea98LTtRQf9xCUX-XDvreijYEbD6XySv-KdrQo8AtWeyT5W4YLckCPS5A6uo0NgICB1cmtmj9FYyH1-jD-6--93lw6Ot8ja24osuAhKByQxMpd8mFltarg8divpwYg_4S62kaTY0N-JC5jyVbQbxl-QJYsIPadltjmovYvYn2oXFkjWD-cCvRGoniCQkrRYjDVAGYy-t0mU"></image>
+        <view class="add-photo-btn"><text style="font-size: 60rpx; color: rgba(0,0,0,0.3);">+</text></view>
+      </view>
+    </view>
+
+    <!-- History -->
+    <view class="section history-section">
+      <view class="section-top"><text class="sec-title">History</text></view>
+      <view class="history-list">
+        <view class="history-item">
+          <view class="his-left"><text style="font-size: 32rpx; font-weight: 300; margin-right: 12rpx;">🕒</text><text class="his-text">浏览历史</text></view>
+          <text style="font-size: 32rpx; color: #8C8C8C;">〉</text>
+        </view>
+        <view class="history-item">
+          <view class="his-left"><text style="font-size: 32rpx; font-weight: 300; margin-right: 12rpx;">☑</text><text class="his-text">我的投票</text></view>
+          <text style="font-size: 32rpx; color: #8C8C8C;">〉</text>
+        </view>
+        <view class="history-item">
+          <view class="his-left"><text style="font-size: 32rpx; font-weight: 300; margin-right: 12rpx;">✎</text><text class="his-text">我的发布</text></view>
+          <text style="font-size: 32rpx; color: #8C8C8C;">〉</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+
+</scroll-view>
+
+  <!-- 底部固定毛玻璃导航 (在 scroll-view 外，避免 fixed 定位失效) -->
+  <view class="bottom-nav">
+    <view class="nav-container">
+      <view class="nav-item" bindtap="goToDiscovery">
+        <image src="/assets/icons/forum.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
+        <text class="nav-text">真心话</text>
+      </view>
+      <view class="nav-item" bindtap="goToHome">
+        <image src="/assets/icons/home_cards.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
+        <text class="nav-text">首页卡片</text>
+      </view>
+      <view class="nav-item active">
+        <image src="/assets/icons/person.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx;"></image>
+        <text class="nav-text">我的档案</text>
+      </view>
+    </view>
+  </view>
+
+</view>

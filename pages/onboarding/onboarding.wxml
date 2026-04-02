@@ -1,0 +1,64 @@
+<!-- pages/onboarding/onboarding.wxml -->
+<view class="container">
+  <view class="bg-blur-shape"></view>
+  
+  <view class="header">
+    <view class="progress-info">
+      <view class="step-counter">
+        <text class="step-current">{{currentIndex + 1}}</text>
+        <text class="step-total">/{{questions.length}}</text>
+      </view>
+      <text class="step-title">DISCOVERY</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width:{{(currentIndex + 1) / questions.length * 100}}%"></view>
+    </view>
+  </view>
+
+  <view class="main">
+    <view class="card" catchtouchstart="touchStart" catchtouchmove="touchMove" catchtouchend="touchEnd" style="transform: translateX({{translateX}}px) rotate({{rotate}}deg); transition: {{transition}}">
+      <view class="icon-wrap">
+        <text style="font-size: 44rpx;">🤝</text>
+      </view>
+      <text class="question-title">{{currentQuestion.title}}</text>
+      <text class="question-desc">{{currentQuestion.desc}}</text>
+
+      <view class="swipe-hints">
+        <view class="hint-col">
+          <text style="font-size: 32rpx; opacity: 0.6;">«</text>
+          <text class="hint-text">左滑选中</text>
+        </view>
+        <view class="hint-col">
+          <text style="font-size: 32rpx; opacity: 0.6;">»</text>
+          <text class="hint-text">右滑选中</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="options-row">
+    <view class="option-btn" bindtap="forceSwipeLeft">
+      <text class="opt-title">{{currentQuestion.leftAns}}</text>
+      <text class="opt-sub">向左滑</text>
+    </view>
+    <view class="option-btn" bindtap="forceSwipeRight">
+      <text class="opt-title">{{currentQuestion.rightAns}}</text>
+      <text class="opt-sub">向右滑</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <view class="footer-dash">
+      <view class="dash-line"></view>
+      <text class="dash-text">寻找同频波长...</text>
+      <view class="dash-line"></view>
+    </view>
+    <view class="footer-actions">
+      <view class="nav-prev" bindtap="goBack">
+        <text style="font-size: 28rpx; margin-right: 8rpx;">←</text>
+        <text>上一步</text>
+      </view>
+      <text class="skip-btn" bindtap="skipQuestion">不愿透露</text>
+    </view>
+  </view>
+</view>

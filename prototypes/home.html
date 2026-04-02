@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SW - 真心话</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "background-start": "#F5F3ED",
+              "background-end": "#D4DDDB",
+              "on-surface": "#1A1A1A",
+              "primary": "#1A1A1A",
+              "outline": "#8E8E8E",
+            },
+            fontFamily: {
+              "headline": ["Noto Serif", "serif"],
+              "body": ["Inter", "sans-serif"],
+            },
+            borderRadius: { xl: "32px" }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background: linear-gradient(180deg, #F5F3ED 0%, #D4DDDB 100%); min-height: 100vh; font-family: 'Inter', sans-serif;}
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; display: inline-block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="text-on-surface pb-32">
+<header class="fixed top-0 w-full z-50 bg-[#F5F3ED]/80 backdrop-blur-xl flex justify-between items-center px-6 py-4">
+    <!-- Header Content: Hamburger, Title, User Count, Profile... -->
+</header>
+<main class="pt-[88px] px-6 max-w-2xl mx-auto">
+    <!-- Card and Tab content... -->
+</main>
+<nav class="fixed bottom-8 left-0 right-0 flex justify-around px-4 py-3 z-50">
+    <!-- Bottom Navigation -->
+</nav>
+</body>
+</html>

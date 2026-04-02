@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>SW - 真心话预览</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "background-start": "#F5F3ED",
+              "background-end": "#D4DDDB",
+              "on-surface": "#1A1A1A",
+              "primary": "#1A1A1A",
+              "outline": "#8E8E8E",
+            },
+            fontFamily: {
+              "headline": ["Noto Serif", "serif"],
+              "body": ["Inter", "sans-serif"],
+            },
+            borderRadius: { xl: "32px", "card": "40px" }
+          }
+        }
+      }
+</script>
+<style>
+    body { 
+        background: linear-gradient(180deg, #F5F3ED 0%, #D4DDDB 100%); 
+        min-height: 100vh; 
+        font-family: 'Inter', sans-serif;
+        overflow: hidden; /* 防止移动端整体滚动 */
+        touch-action: none;
+    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; display: inline-block; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    
+    /* 容器区域限制 */
+    .app-container {
+        max-width: 480px; 
+        margin: 0 auto; 
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    
+    /* 卡片拖拽动画与定位 */
+    .card-container {
+        flex: 1;
+        position: relative;
+        perspective: 1000px;
+        z-index: 10;
+    }
+    
+    .swipe-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0; left: 0;
+        background: #FFFFFF;
+        border-radius: 40px;
+        box-shadow: 0 16px 80px rgba(49, 51, 43, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        transform-origin: 50% 100%; /* 从底部开始旋转 */
+        will-change: transform;
+        cursor: grab;
+    }
+    .swipe-card:active { cursor: grabbing; }
+
+    /* 装饰网格 */
+    .grid-icon { display: grid; grid-template-columns: repeat(2, 4px); gap: 4px; }
+    .grid-dot { width: 4px; height: 4px; background-color: #1A1A1A; border-radius: 50%; }
+
+    /* Modal */
+    .modal-overlay {
+        position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+        z-index: 999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+</style>
+</head>
+<body class="text-on-surface">
+
+<div class="app-container">
+    <!-- 顶部 -->
+    <header class="w-full flex justify-between items-start px-6 pt-10 pb-4">
+        <div class="flex flex-col">
+            <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-[#1A1A1A]">4月15日 星期二</span>
+            <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-[#1A1A1A]/60 mt-1">阿姆斯特丹</span>
+        </div>
+        <div class="grid-icon mt-1">
+            <div class="grid-dot"></div><div class="grid-dot"></div>
+            <div class="grid-dot"></div><div class="grid-dot"></div>
+            <div class="grid-dot"></div><div class="grid-dot"></div>
+            <div class="grid-dot"></div><div class="grid-dot"></div>
+        </div>
+    </header>
+
+    <!-- 头像条 -->
+    <section class="flex gap-4 overflow-x-auto px-6 pb-2 no-scrollbar shrink-0">
+        <div class="flex-shrink-0 flex flex-col items-center gap-2">
+            <div class="relative w-16 h-16 p-1 rounded-[20px] border border-[#1A1A1A]/80">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKIsQ_bqFzmWxDSDkiZxPO2wAgWkowGYIPO4QTcuJtrO_sZjy0vXIEH1v_IzEUuvE_MstRGn0ENMLnF5L2ZeoRnB0UdWrIdPqBSjYMPZxI9YbWyRNotG8jewPQeF_UXwfxGe52oL8DVzjv6kx3-eOQ7g8BR28FK-whVhDgDX6Yw9c9intyLOHfgDXnjdwJF8aOtUZ9TSTQg3E4UuDDbI4utTxXxxtUjdgDmFuZzO3eQznb6Wxt0K_uYOa2MWd63rKUaVmx58SBfww" class="w-full h-full object-cover rounded-[16px]"/>
+                <div class="absolute -top-1 -right-1 w-5 h-5 bg-[#1A1A1A] border-[3px] border-[#F5F3ED] rounded-full"></div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider">你</span>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-center gap-2">
+            <div class="relative w-16 h-16 p-1 rounded-[20px] border border-[#1A1A1A]/10">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI" class="w-full h-full object-cover rounded-[16px]"/>
+                <div class="absolute -top-1 -right-1 w-5 h-5 bg-white border-[3px] border-[#F5F3ED] rounded-full"></div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider">SOFIA</span>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-center gap-2">
+            <div class="relative w-16 h-16 p-1 rounded-[20px] border border-[#1A1A1A]/10">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY" class="w-full h-full object-cover rounded-[16px]"/>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider">MARCUS</span>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-center gap-2">
+            <div class="relative w-16 h-16 p-1 rounded-[20px] border border-[#1A1A1A]/10">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k" class="w-full h-full object-cover rounded-[16px]"/>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider">ELENA</span>
+        </div>
+    </section>
+
+    <!-- 分类 -->
+    <div class="flex gap-6 mt-4 mb-4 border-b border-black/5 pb-2 px-6 overflow-x-auto no-scrollbar shrink-0">
+        <button class="text-[10px] font-bold uppercase tracking-widest border-b-[3px] border-[#1A1A1A] text-[#1A1A1A] pb-2">全部</button>
+        <button class="text-[10px] font-bold uppercase tracking-widest text-[#1A1A1A]/40 pb-2">内心世界</button>
+        <button class="text-[10px] font-bold uppercase tracking-widest text-[#1A1A1A]/40 pb-2">旅行探索</button>
+        <button class="text-[10px] font-bold uppercase tracking-widest text-[#1A1A1A]/40 pb-2">价值观</button>
+    </div>
+
+    <!-- 可划卡片区 -->
+    <div class="px-6 pb-[220px] flex-1 relative">
+        <div class="card-container" id="card-container">
+            <div class="swipe-card" id="main-card">
+                <div class="p-6 flex items-center justify-between border-b border-black/[0.03]">
+                    <div class="flex items-center gap-3">
+                        <img class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI"/>
+                        <div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider" id="cardName">SOFIA的档案</div>
+                            <div class="text-[10px] text-black/40 uppercase tracking-widest" id="cardTags">态度 · 幽默</div>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-headline">1°</div>
+                </div>
+                <div class="flex-grow flex flex-col justify-center items-center text-center px-10 pointer-events-none">
+                    <h2 class="font-headline text-[32px] text-on-surface leading-[1.3] tracking-tight" id="cardContent">
+                        “坚定地认为《虎胆龙威》是一部圣诞电影。”
+                    </h2>
+                </div>
+                <div class="p-6 border-t border-black/[0.03] pointer-events-none">
+                    <div class="flex justify-between items-end mb-3">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-black/40">认同</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-black/40">不认同</span>
+                    </div>
+                    <div class="h-[3px] w-full bg-black/5 rounded-full overflow-hidden relative">
+                        <div class="absolute inset-y-0 left-0 bg-black w-[65%]" id="cardPercent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部划动动作按钮 -->
+        <div class="absolute bottom-[90px] left-0 right-0 flex items-end justify-center gap-10 z-0">
+            <div class="flex flex-col items-center gap-2" onclick="forceSwipe('left')">
+                <button class="w-[60px] h-[60px] rounded-full border border-black flex items-center justify-center hover:bg-black/5 active:scale-95 transition-all outline-none">
+                    <span class="material-symbols-outlined text-[28px] text-[#1A1A1A]">close</span>
+                </button>
+                <div class="text-center">
+                    <div class="text-[8px] text-black/40 font-bold uppercase tracking-widest">左滑</div>
+                    <div class="text-[10px] font-bold uppercase tracking-wider">不认同</div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center pb-8" onclick="openAI()">
+                <button class="w-[50px] h-[50px] rounded-full bg-[#1A1A1A] flex items-center justify-center shadow-xl active:scale-95 transition-all outline-none">
+                    <span class="material-symbols-outlined text-[24px] text-white">mic</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center gap-2" onclick="forceSwipe('right')">
+                <button class="w-[60px] h-[60px] rounded-full border border-black flex items-center justify-center hover:bg-black/5 active:scale-95 transition-all outline-none">
+                    <span class="material-symbols-outlined text-[32px] text-[#1A1A1A]" style="font-weight: 200;">radio_button_unchecked</span>
+                </button>
+                <div class="text-center">
+                    <div class="text-[8px] text-black/40 font-bold uppercase tracking-widest">右滑</div>
+                    <div class="text-[10px] font-bold uppercase tracking-wider">认同</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 极简毛玻璃底栏 -->
+    <nav class="absolute bottom-6 w-[85%] left-1/2 -translate-x-1/2 bg-white/60 backdrop-blur-[20px] rounded-full flex justify-around items-center py-2 px-2 shadow-[0_10px_40px_rgba(0,0,0,0.05)] border border-white/40 z-50">
+        <div class="flex flex-col items-center text-black/40 px-3 cursor-pointer">
+            <span class="material-symbols-outlined text-[22px]">forum</span>
+            <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">交流</span>
+        </div>
+        <div class="flex flex-col items-center bg-[#1A1A1A] text-white rounded-full px-5 py-[6px] shadow-md cursor-pointer">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">auto_awesome_mosaic</span>
+            <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">首页卡片</span>
+        </div>
+        <div class="flex flex-col items-center text-black/40 px-3 cursor-pointer">
+            <span class="material-symbols-outlined text-[22px]">person</span>
+            <span class="text-[8px] font-bold uppercase tracking-wider mt-0.5">我的档案</span>
+        </div>
+    </nav>
+
+    <!-- 频控阻断模态框 -->
+    <div class="modal-overlay" id="limitModal">
+        <div class="bg-white rounded-[32px] p-8 max-w-[80%] text-center shadow-2xl">
+            <h3 class="text-xl font-headline font-bold mb-3 text-[#1A1A1A]">次数用尽</h3>
+            <p class="text-sm text-black/60 leading-relaxed mb-6">今日基础用户上滑丢弃功能 (5次) 已用尽，升级三观库可解锁无限划卡功能。</p>
+            <button class="w-full bg-[#1A1A1A] text-white py-3 rounded-full text-xs font-bold tracking-widest uppercase outline-none" onclick="document.getElementById('limitModal').classList.remove('active');">确认</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const card = document.getElementById('main-card');
+    let isDragging = false, startX = 0, startY = 0, currentX = 0, currentY = 0;
+    
+    // Limits
+    let upSwipeCount = 0;
+    const MAX_UP_SWIPES = 5;
+
+    // Data Mock
+    const mockData = [
+        { name: "MARCUS的档案", tags: "社交 · 偏好", content: "“微信永远不发语音，认为发几秒以上的语音是不尊重人。”", percent: "30%" },
+        { name: "ELENA的档案", tags: "情感 · 自由", content: "“灵魂伴侣不一定要通过婚姻来定义。”", percent: "80%" }
+    ];
+    let dataIndex = 0;
+
+    // Event Listeners for Touch/Mouse
+    card.addEventListener('mousedown', dragStart);
+    card.addEventListener('touchstart', dragStart, {passive: false});
+    window.addEventListener('mousemove', dragMove);
+    window.addEventListener('touchmove', dragMove, {passive: false});
+    window.addEventListener('mouseup', dragEnd);
+    window.addEventListener('touchend', dragEnd);
+
+    function dragStart(e) {
+        if(e.type === 'touchstart') e = e.touches[0];
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        card.style.transition = 'none';
+    }
+
+    function dragMove(e) {
+        if (!isDragging) return;
+        // if(e.type === 'touchmove') e.preventDefault(); // Prevent scrolling
+        const currentE = e.type === 'touchmove' ? e.touches[0] : e;
+        currentX = currentE.clientX - startX;
+        currentY = currentE.clientY - startY;
+        const rotate = currentX * 0.05;
+        card.style.transform = `translateX(${currentX}px) translateY(${currentY}px) rotate(${rotate}deg)`;
+    }
+
+    function dragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        const THRESHOLD = 100;
+        
+        if (currentX > THRESHOLD) {
+            animateSwipe('right');
+        } else if (currentX < -THRESHOLD) {
+            animateSwipe('left');
+        } else if (currentY < -THRESHOLD && Math.abs(currentY) > Math.abs(currentX)) {
+            handleUpSwipe();
+        } else {
+            resetCard();
+        }
+    }
+
+    function animateSwipe(direction) {
+        const moveX = direction === 'right' ? window.innerWidth : -window.innerWidth;
+        card.style.transition = 'transform 0.4s ease-out';
+        card.style.transform = `translateX(${moveX}px) rotate(${direction === 'right' ? 30 : -30}deg)`;
+        setTimeout(loadNextCard, 300);
+    }
+
+    function forceSwipe(direction) {
+        if(!isDragging){
+            animateSwipe(direction);
+        }
+    }
+
+    function handleUpSwipe() {
+        if(upSwipeCount >= MAX_UP_SWIPES) {
+            resetCard();
+            document.getElementById('limitModal').classList.add('active');
+            return;
+        }
+        upSwipeCount++;
+        card.style.transition = 'transform 0.4s ease-out';
+        card.style.transform = `translateY(-${window.innerHeight}px) rotate(0deg)`;
+        setTimeout(loadNextCard, 300);
+    }
+
+    function resetCard() {
+        card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        card.style.transform = `translateX(0px) translateY(0px) rotate(0deg)`;
+        currentX = 0; currentY = 0;
+    }
+
+    function loadNextCard() {
+        card.style.transition = 'none';
+        card.style.transform = `translateX(0px) translateY(50px) scale(0.95)`;
+        
+        const nextData = mockData[dataIndex % mockData.length];
+        document.getElementById('cardName').innerText = nextData.name;
+        document.getElementById('cardTags').innerText = nextData.tags;
+        document.getElementById('cardContent').innerText = nextData.content;
+        document.getElementById('cardPercent').style.width = nextData.percent;
+        
+        dataIndex++;
+
+        // Trigger reflow
+        void card.offsetWidth;
+
+        card.style.transition = 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        card.style.transform = `translateX(0px) translateY(0px) scale(1)`;
+        currentX = 0; currentY = 0;
+    }
+
+    function openAI() {
+        alert("调用后台 API 以获取该卡片的 AI 的历史评价与语音分析...");
+    }
+</script>
+</body>
+</html>
