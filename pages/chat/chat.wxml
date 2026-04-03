@@ -1,6 +1,6 @@
 <view class="container" style="padding-top: {{statusBarHeight}}px;">
   <view class="header">
-    <text class="page-title">会话广场</text>
+    <text class="page-title">小纸条</text>
   </view>
 
   <scroll-view scroll-y="true" enable-flex class="chat-list">

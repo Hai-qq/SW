@@ -1,4 +1,5 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "小纸条"
+  "navigationBarTitleText": "小纸条",
+  "navigationStyle": "custom"
 }

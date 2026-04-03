@@ -28,31 +28,17 @@ page {
 .header {
   width: 100%;
   box-sizing: border-box;
-  padding: 0 40rpx 24rpx 40rpx;
+  padding: 0 40rpx 14rpx 40rpx;
 }
 .header-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  padding-top: 28rpx;
 }
 .date-location {
   display: flex;
   flex-direction: column;
-}
-.date-text {
-  font-size: 20rpx;
-  font-weight: bold;
-  letter-spacing: 4rpx;
-  text-transform: uppercase;
-  color: #1A1A1A;
-}
-.location-text {
-  font-size: 20rpx;
-  font-weight: bold;
-  letter-spacing: 4rpx;
-  color: rgba(26,26,26,0.6);
-  text-transform: uppercase;
-  margin-top: 6rpx;
 }
 
 /* Registered Users Badge */
@@ -62,7 +48,6 @@ page {
   background: rgba(26,26,26,0.06);
   padding: 8rpx 16rpx;
   border-radius: 20rpx;
-  margin-bottom: 24rpx;
   width: max-content;
 }
 .online-dot {
@@ -104,7 +89,7 @@ page {
 .stories-list {
   width: 100%;
   white-space: nowrap;
-  padding: 0 40rpx;
+  padding: 34rpx 40rpx 0;
   box-sizing: border-box;
 }
 .story-item {
@@ -153,34 +138,12 @@ page {
 }
 
 /* Categories */
-.category-tabs {
-  width: 100%;
-  white-space: nowrap;
-  padding: 28rpx 40rpx 20rpx;
-  box-sizing: border-box;
-}
-.tab-item {
-  display: inline-block;
-  margin-right: 34rpx;
-}
-.tab-item text {
-  font-size: 18rpx;
-  font-weight: bold;
-  letter-spacing: 1.5rpx;
-  color: rgba(0,0,0,0.4);
-  padding-bottom: 10rpx;
-}
-.tab-item.active text {
-  color: #1A1A1A;
-  border-bottom: 2rpx solid #1A1A1A;
-}
-
 /* Card */
 .card-wrapper {
   position: relative;
   padding: 30rpx 40rpx 0;
-  height: 706rpx;
-  margin-top: 6rpx;
+  height: 958rpx;
+  margin-top: 28rpx;
   perspective: 1000px;
 }
 .card-stack-layer {
@@ -370,6 +333,52 @@ page {
   margin-left: 0;
 }
 
+.card-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+.card-action-pill {
+  flex: 1;
+  min-height: 90rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 22rpx;
+  border-radius: 24rpx;
+  background: #ECECE8;
+  border: 1px solid rgba(0,0,0,0.02);
+  box-shadow: none;
+  box-sizing: border-box;
+}
+.card-action-icon-wrap {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  background: #F8F8F6;
+  border: 1px solid rgba(0,0,0,0.02);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.card-action-icon {
+  width: 28rpx;
+  height: 28rpx;
+  opacity: 0.68;
+}
+.card-action-icon.small {
+  width: 24rpx;
+  height: 24rpx;
+}
+.card-action-text {
+  margin-left: 14rpx;
+  font-size: 20rpx;
+  font-weight: bold;
+  letter-spacing: 0.2rpx;
+  color: rgba(34,34,34,0.62);
+  line-height: 1.25;
+}
+
 /* Action Buttons */
 .action-buttons-wrapper {
   display: flex;
@@ -378,6 +387,8 @@ page {
   gap: 90rpx;
   margin-top: 100rpx;
   padding: 0 40rpx 24rpx;
+  visibility: hidden;
+  pointer-events: none;
 }
 .action-col {
   display: flex;
@@ -451,7 +462,7 @@ page {
 }
 
 /* Bottom Nav Shared */
-.bottom-nav { position: fixed; bottom: 30rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+.bottom-nav { position: fixed; bottom: 52rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
 .nav-container { pointer-events: auto; position: relative; width: 58%; min-width: 520rpx; overflow: hidden; border-radius: 100rpx; box-shadow: 0 14rpx 28rpx rgba(196, 184, 156, 0.08); }
 .nav-glass { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,247,243,0.92) 100%); border: 1px solid rgba(255,255,255,0.94); border-radius: 100rpx; box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9); }
 .nav-content { position: relative; z-index: 1; padding: 22rpx 42rpx 18rpx; display: flex; justify-content: space-between; align-items: center; }

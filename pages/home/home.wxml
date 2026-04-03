@@ -11,8 +11,6 @@
           <view class="online-dot"></view>
           <text>32,419 位同频者已加入</text>
         </view>
-        <text class="date-text">4月15日  星期二</text>
-        <text class="location-text">阿姆斯特丹</text>
       </view>
       <!-- 右侧装饰网格图标 -->
       <view class="grid-icon">
@@ -43,18 +41,6 @@
           <view class="badge"></view>
         </view>
         <text class="name-text">{{item.name}}</text>
-      </view>
-    </scroll-view>
-
-    <!-- 分类标签 TabBar -->
-    <scroll-view scroll-x="true" class="category-tabs" show-scrollbar="false">
-      <view
-        wx:for="{{tabs}}"
-        wx:key="index"
-        class="tab-item {{item === currentTab ? 'active' : ''}}"
-        bindtap="switchTab"
-        data-tab="{{item}}">
-        <text>{{item}}</text>
       </view>
     </scroll-view>
 
@@ -120,6 +106,23 @@
               <image src="{{currentCard.disagreeAvatar}}" class="tiny-avatar single"></image>
             </view>
           </view>
+
+          <view class="card-actions">
+            <view class="card-action-pill" bindtap="openCommentPanel">
+              <view class="card-action-icon-wrap">
+                <image src="/assets/icons/forum.svg" class="card-action-icon" mode="aspectFit"></image>
+              </view>
+              <text class="card-action-text">评论</text>
+            </view>
+
+            <view class="card-action-pill" bindtap="reduceSimilarTopics">
+              <view class="card-action-icon-wrap">
+                <image src="/assets/icons/close.svg" class="card-action-icon small" mode="aspectFit"></image>
+              </view>
+              <text class="card-action-text">减少此类推荐</text>
+            </view>
+          </view>
+
         </view>
       </view>
     </view>
