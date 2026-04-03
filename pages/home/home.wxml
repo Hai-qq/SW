@@ -7,6 +7,10 @@
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
     <view class="header-content">
       <view class="date-location">
+        <view class="registered-users" bindtap="goToProfile">
+          <view class="online-dot"></view>
+          <text>32,419 位同频者已加入</text>
+        </view>
         <text class="date-text">4月15日  星期二</text>
         <text class="location-text">阿姆斯特丹</text>
       </view>
@@ -56,6 +60,22 @@
 
     <!-- 核心卡片容器 -->
     <view class="card-wrapper">
+      <view class="card-stack-layer back-one"></view>
+      <view class="card-stack-layer back-two"></view>
+      <view class="card-preview" style="transform: translateY(30rpx) scale({{previewScale}});">
+        <view class="card-preview-header">
+          <view class="user-info">
+            <image src="{{nextCard.user.avatar}}" class="card-avatar" mode="aspectFill"></image>
+            <view class="user-meta">
+              <text class="profile-name">{{nextCard.user.name}}的档案</text>
+              <text class="profile-tags">观点 · {{nextCard.tags}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="card-preview-body">
+          <text class="card-preview-text">“{{nextCard.content}}”</text>
+        </view>
+      </view>
       <view 
         class="card-inner" 
         style="transform: translateX({{cardTranslateX}}px) translateY({{cardTranslateY}}px) rotate({{cardRotate}}deg); transition: {{cardTransition}};"
@@ -72,7 +92,9 @@
               <text class="profile-tags">观点 · {{currentCard.tags}}</text>
             </view>
           </view>
-          <text class="temperature-text">1°</text>
+          <view class="share-trigger" bindtap="handleShare">
+            <text class="share-trigger-icon">↗</text>
+          </view>
         </view>
 
         <!-- 卡片正文: 观点文字 -->
@@ -104,52 +126,67 @@
 
     <!-- 底部划动动作按钮 -->
     <view class="action-buttons-wrapper">
-      <!-- 左划/不认同按钮 -->
-      <view class="action-col" bindtap="forceSwipeLeft">
+      <!-- 评论入口 -->
+      <view class="action-col" bindtap="openCommentPanel">
         <view class="circle-btn">
-          <image src="/assets/icons/close.svg" style="width: 60rpx; height: 60rpx;"></image>
+          <image src="/assets/icons/forum.svg" style="width: 34rpx; height: 34rpx; opacity: 0.72;"></image>
         </view>
-        <view class="action-text-wrapper">
-          <text class="action-hint">左滑</text>
-          <text class="action-main">不认同</text>
+        <view class="action-text-wrapper action-label">
+          <text class="action-hint">COMMENT</text>
+          <text class="action-main">评论</text>
         </view>
       </view>
       
-      <!-- AI & 评论功能（融入居中） -->
+      <!-- 中部 AI 通话 -->
       <view class="center-actions">
-         <view class="ai-comment-btn" bindtap="openAICommentDrawer">
-             <image src="/assets/icons/mic.svg" style="width: 50rpx; height: 50rpx;"></image>
-         </view>
+        <view class="voice-btn" bindtap="handleVoiceInput">
+          <image src="/assets/icons/mic.svg" style="width: 34rpx; height: 34rpx; opacity: 0.8; filter: brightness(0.1);"></image>
+        </view>
+        <view class="action-text-wrapper action-label center-text">
+          <text class="action-hint">AI CALL</text>
+          <text class="action-main">连线智能</text>
+        </view>
       </view>
 
-      <!-- 右划/认同按钮 -->
-      <view class="action-col" bindtap="forceSwipeRight">
+      <!-- 降低同类话题 -->
+      <view class="action-col" bindtap="reduceSimilarTopics">
         <view class="circle-btn">
-          <image src="/assets/icons/circle.svg" style="width: 70rpx; height: 70rpx;"></image>
+          <image src="/assets/icons/close.svg" style="width: 30rpx; height: 30rpx; opacity: 0.72;"></image>
         </view>
-        <view class="action-text-wrapper">
-          <text class="action-hint">右滑</text>
-          <text class="action-main">认同</text>
+        <view class="action-text-wrapper action-label">
+          <text class="action-hint">FILTER</text>
+          <text class="action-main">减少同类</text>
+          <text class="action-sub">话题</text>
         </view>
       </view>
     </view>
     
   </scroll-view>
 
-  <!-- 底部毛玻璃导航条 (STORIES/CARDS/PROFILE 中文化) -->
+  <!-- 底部毛玻璃导航条 (三段式) -->
   <view class="bottom-nav">
     <view class="nav-container">
-      <view class="nav-item" bindtap="goToDiscovery">
-        <image src="/assets/icons/forum.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
-        <text class="nav-text">真心话</text>
-      </view>
-      <view class="nav-item active">
-        <image src="/assets/icons/home_cards.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx;"></image>
-        <text class="nav-text">首页卡片</text>
-      </view>
-      <view class="nav-item" bindtap="goToProfile">
-        <image src="/assets/icons/person.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
-        <text class="nav-text">我的档案</text>
+      <view class="nav-glass"></view>
+      <view class="nav-content">
+        <view class="nav-item" bindtap="goToDiscovery">
+          <view class="nav-icon surf-icon">
+            <view class="wave"></view>
+          </view>
+          <text class="nav-text">冲浪</text>
+        </view>
+        <view class="nav-item active">
+          <view class="nav-icon cards-icon">
+            <view class="cards-tab"></view>
+          </view>
+          <text class="nav-text">真心话</text>
+        </view>
+        <view class="nav-item" bindtap="goToChat">
+          <view class="nav-icon chat-icon">
+            <view class="bubble"></view>
+            <view class="tail"></view>
+          </view>
+          <text class="nav-text">小纸条</text>
+        </view>
       </view>
     </view>
   </view>

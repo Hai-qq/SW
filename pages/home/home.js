@@ -1,4 +1,61 @@
 // pages/home/home.js
+const MOCK_CARDS = [
+  {
+    id: 101,
+    user: {
+      name: 'SOFIA',
+      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI'
+    },
+    tags: '态度 · 幽默',
+    content: '坚定地认为《虎胆龙威》是一部圣诞电影。',
+    agreePercent: 65,
+    agreeAvatars: [
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY',
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k'
+    ],
+    disagreeAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKIsQ_bqFzmWxDSDkiZxPO2wAgWkowGYIPO4QTcuJtrO_sZjy0vXIEH1v_IzEUuvE_MstRGn0ENMLnF5L2ZeoRnB0UdWrIdPqBSjYMPZxI9YbWyRNotG8jewPQeF_UXwfxGe52oL8DVzjv6kx3-eOQ7g8BR28FK-whVhDgDX6Yw9c9intyLOHfgDXnjdwJF8aOtUZ9TSTQg3E4UuDDbI4utTxXxxtUjdgDmFuZzO3eQznb6Wxt0K_uYOa2MWd63rKUaVmx58SBfww'
+  },
+  {
+    id: 202,
+    user: {
+      name: 'MARCUS',
+      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY'
+    },
+    tags: '态度 · 生活',
+    content: '认为晚上的效率永远比白天高。',
+    agreePercent: 42,
+    agreeAvatars: [
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI'
+    ],
+    disagreeAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k'
+  },
+  {
+    id: 303,
+    user: {
+      name: 'ELENA',
+      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k'
+    },
+    tags: '价值观 · 真诚',
+    content: '相信真正成熟的人会先理解，再表达自己。',
+    agreePercent: 71,
+    agreeAvatars: [
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI',
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY'
+    ],
+    disagreeAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-Z8IF5na2wP_u3mIa7KkxtYQMxkGNEnQTXeI7C24KLECwa-tXuUPLgaOFnyM2S85MR7PLo-ogcRtfUSqHQq6E_M-3Spk1lTt12Rta6_-hEAOuD_1WfyOotIO49yfl_GnuTQrBCNIVmOIA05b8iF_QO9THJsxRiCqD-jjpwU5CdxOKrFf5QRYf3ApwysooRMiMY9ClbhuxlO2G6n2C6da3emzy4tOIq4nT0KB5bHI7PSya-hqLHAe-DNG4M7Yp89lZn9j_Y1zZSIw'
+  }
+];
+
+function cloneCard(card) {
+  return JSON.parse(JSON.stringify(card));
+}
+
+function getNextMockCard(currentId) {
+  const currentIndex = MOCK_CARDS.findIndex((card) => card.id === currentId);
+  const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % MOCK_CARDS.length;
+  return cloneCard(MOCK_CARDS[nextIndex]);
+}
+
 Page({
   data: {
     statusBarHeight: 20,
@@ -11,21 +68,9 @@ Page({
       { id: 3, name: 'ELENA', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k' },
       { id: 4, name: 'JULI', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-Z8IF5na2wP_u3mIa7KkxtYQMxkGNEnQTXeI7C24KLECwa-tXuUPLgaOFnyM2S85MR7PLo-ogcRtfUSqHQq6E_M-3Spk1lTt12Rta6_-hEAOuD_1WfyOotIO49yfl_GnuTQrBCNIVmOIA05b8iF_QO9THJsxRiCqD-jjpwU5CdxOKrFf5QRYf3ApwysooRMiMY9ClbhuxlO2G6n2C6da3emzy4tOIq4nT0KB5bHI7PSya-hqLHAe-DNG4M7Yp89lZn9j_Y1zZSIw' }
     ],
-    currentCard: {
-      id: 101,
-      user: {
-        name: 'SOFIA',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI'
-      },
-      tags: '态度 · 幽默',
-      content: '坚定地认为《虎胆龙威》是一部圣诞电影。',
-      agreePercent: 65,
-      agreeAvatars: [
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY',
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k'
-      ],
-      disagreeAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKIsQ_bqFzmWxDSDkiZxPO2wAgWkowGYIPO4QTcuJtrO_sZjy0vXIEH1v_IzEUuvE_MstRGn0ENMLnF5L2ZeoRnB0UdWrIdPqBSjYMPZxI9YbWyRNotG8jewPQeF_UXwfxGe52oL8DVzjv6kx3-eOQ7g8BR28FK-whVhDgDX6Yw9c9intyLOHfgDXnjdwJF8aOtUZ9TSTQg3E4UuDDbI4utTxXxxtUjdgDmFuZzO3eQznb6Wxt0K_uYOa2MWd63rKUaVmx58SBfww'
-    },
+    currentCard: cloneCard(MOCK_CARDS[0]),
+    nextCard: cloneCard(MOCK_CARDS[1]),
+    previewScale: 0.978,
     
     // Animation & Touch state
     cardTranslateX: 0,
@@ -54,6 +99,19 @@ Page({
     });
   },
 
+  onShareAppMessage() {
+    return {
+      title: `${this.data.currentCard.user.name}的观点卡片`,
+      path: '/pages/home/home'
+    };
+  },
+
+  onShareTimeline() {
+    return {
+      title: `${this.data.currentCard.user.name}的观点卡片`
+    };
+  },
+
   /* ====== Touch Events for Swiping ====== */
   touchStart(e) {
     if (this.data.showLimitModal) return; // disable swipe if modal shown
@@ -71,11 +129,13 @@ Page({
     const deltaX = currentX - this.data.startX;
     const deltaY = currentY - this.data.startY;
     const rotate = deltaX * 0.05;
+    const previewScale = Math.min(1, 0.978 + Math.min(Math.abs(deltaX), 180) / 2400 + Math.min(Math.abs(deltaY), 120) / 3000);
 
     this.setData({
       cardTranslateX: deltaX,
       cardTranslateY: deltaY,
-      cardRotate: rotate
+      cardRotate: rotate,
+      previewScale
     });
   },
 
@@ -102,7 +162,8 @@ Page({
         cardTranslateX: 0,
         cardTranslateY: 0,
         cardRotate: 0,
-        cardTransition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'
+        cardTransition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+        previewScale: 0.978
       });
     }
   },
@@ -113,7 +174,8 @@ Page({
     this.setData({
       cardTranslateX: xDest,
       cardRotate: direction === 'right' ? 30 : -30,
-      cardTransition: 'transform 0.4s ease-out'
+      cardTransition: 'transform 0.4s ease-out',
+      previewScale: 1
     });
 
     this.recordSwipe(direction);
@@ -131,6 +193,7 @@ Page({
         cardTranslateY: 0,
         cardRotate: 0,
         cardTransition: 'transform 0.3s ease-out',
+        previewScale: 0.978,
         showLimitModal: true
       });
       return;
@@ -139,6 +202,7 @@ Page({
     this.setData({
       cardTranslateY: -800,
       cardTransition: 'transform 0.4s ease-out',
+      previewScale: 1,
       upSwipeCount: this.data.upSwipeCount + 1
     });
 
@@ -173,22 +237,17 @@ Page({
   },
 
   loadNextCard() {
-    // API Call to /api/v1/cards/recommend expected here
-    // Mocking next card loading
+    const currentCard = cloneCard(this.data.nextCard);
+    const nextCard = getNextMockCard(currentCard.id);
+
     this.setData({
       cardTranslateX: 0,
       cardTranslateY: 0,
       cardRotate: 0,
       cardTransition: 'none',
-      currentCard: {
-        id: Math.floor(Math.random() * 1000),
-        user: { name: 'MARCUS', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY' },
-        tags: '态度 · 生活',
-        content: '认为晚上的效率永远比白天高。',
-        agreePercent: 42,
-        agreeAvatars: [],
-        disagreeAvatar: ''
-      }
+      previewScale: 0.978,
+      currentCard,
+      nextCard
     });
   },
 
@@ -202,10 +261,33 @@ Page({
     this.setData({ swipeSessionCount: 0 });
   },
 
-  openAICommentDrawer() {
-    // Implement AI sliding drawer opening
+  openCommentPanel() {
     wx.showToast({
-      title: '打开AI评论与讨论',
+      title: '评论功能开发中',
+      icon: 'none'
+    });
+  },
+
+  handleShare() {
+    wx.showShareMenu({
+      menus: ['shareAppMessage', 'shareTimeline']
+    });
+    wx.showToast({
+      title: '分享功能开发中',
+      icon: 'none'
+    });
+  },
+
+  handleVoiceInput() {
+    wx.showToast({
+      title: '语音输入开发中',
+      icon: 'none'
+    });
+  },
+
+  reduceSimilarTopics() {
+    wx.showToast({
+      title: '将减少此类话题',
       icon: 'none'
     });
   },
@@ -226,7 +308,11 @@ Page({
     wx.redirectTo({ url: '/pages/discovery/discovery' });
   },
 
+  goToChat() {
+    wx.redirectTo({ url: '/pages/chat/chat' });
+  },
+
   goToProfile() {
-    wx.redirectTo({ url: '/pages/profile/profile' });
+    wx.navigateTo({ url: '/pages/profile/profile' });
   }
 });

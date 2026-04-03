@@ -15,8 +15,8 @@ Page({
   goToHome() {
     wx.redirectTo({ url: '/pages/home/home' });
   },
-  goToProfile() {
-    wx.redirectTo({ url: '/pages/profile/profile' });
+  goToChat() {
+    wx.redirectTo({ url: '/pages/chat/chat' });
   },
   openPublish() {
     wx.showToast({ title: '发布', icon: 'none' });

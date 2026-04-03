@@ -127,17 +127,25 @@
   <!-- 底部固定毛玻璃导航 (在 scroll-view 外，避免 fixed 定位失效) -->
   <view class="bottom-nav">
     <view class="nav-container">
-      <view class="nav-item" bindtap="goToDiscovery">
-        <image src="/assets/icons/forum.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
-        <text class="nav-text">真心话</text>
-      </view>
-      <view class="nav-item" bindtap="goToHome">
-        <image src="/assets/icons/home_cards.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx; opacity: 0.5;"></image>
-        <text class="nav-text">首页卡片</text>
-      </view>
-      <view class="nav-item active">
-        <image src="/assets/icons/person.svg" style="width: 44rpx; height: 44rpx; margin-bottom: 8rpx;"></image>
-        <text class="nav-text">我的档案</text>
+      <view class="nav-glass"></view>
+      <view class="nav-content">
+        <view class="nav-item" bindtap="goToDiscovery">
+          <view class="nav-icon stories-icon"></view>
+          <text class="nav-text">真心话</text>
+        </view>
+        <view class="nav-item" bindtap="goToHome">
+          <view class="nav-icon cards-icon">
+            <view class="cards-tab"></view>
+          </view>
+          <text class="nav-text">首页</text>
+        </view>
+        <view class="nav-item active">
+          <view class="nav-icon profile-icon">
+            <view class="profile-icon-head"></view>
+            <view class="profile-icon-body"></view>
+          </view>
+          <text class="nav-text">我的档案</text>
+        </view>
       </view>
     </view>
   </view>

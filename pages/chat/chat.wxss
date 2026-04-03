@@ -1,0 +1,44 @@
+page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linear-gradient(180deg, #F8F1E4 0%, #EBE4D5 45%, #E1DAC7 100%); background-attachment: fixed; min-height: 100vh; }
+.container { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+.header { padding: 20rpx 40rpx 40rpx; display: flex; justify-content: space-between; align-items: flex-end; }
+.page-title { font-family: 'Noto Serif', serif; font-size: 56rpx; font-weight: bold; font-style: italic; }
+
+.chat-list { flex: 1; padding: 0 40rpx 200rpx; box-sizing: border-box; width: 100%; }
+.chat-item { display: flex; align-items: center; background: rgba(255,255,255,0.92); border-radius: 40rpx; padding: 32rpx 36rpx; margin-bottom: 24rpx; box-shadow: 0 16rpx 40rpx rgba(196,184,156,0.15); border: 2rpx solid rgba(255,255,255,0.8); }
+.avatar-ph { width: 88rpx; height: 88rpx; border-radius: 32rpx; background: #DFDCD1; border: 4rpx solid #FFF; flex-shrink: 0; margin-right: 28rpx; position: relative; }
+.chat-info { flex: 1; overflow: hidden; }
+.chat-name-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.chat-name { font-family: 'Noto Serif', serif; font-weight: bold; font-size: 30rpx; color: #1A1A1A; }
+.chat-time { font-size: 18rpx; color: rgba(26,26,26,0.3); font-weight: bold; letter-spacing: 2rpx; }
+.chat-preview { font-size: 24rpx; color: rgba(26,26,26,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+
+/* Bottom Nav Shared */
+.bottom-nav { position: fixed; bottom: 30rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+.nav-container { pointer-events: auto; position: relative; width: 58%; min-width: 520rpx; overflow: hidden; border-radius: 100rpx; box-shadow: 0 14rpx 28rpx rgba(196, 184, 156, 0.08); }
+.nav-glass { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,247,243,0.92) 100%); border: 1px solid rgba(255,255,255,0.94); border-radius: 100rpx; box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9); }
+.nav-content { position: relative; z-index: 1; padding: 22rpx 42rpx 18rpx; display: flex; justify-content: space-between; align-items: center; }
+.nav-item { display: flex; flex-direction: column; align-items: center; opacity: 1; min-width: 104rpx; }
+
+/* Icon Wrappers */
+.nav-icon { position: relative; width: 42rpx; height: 42rpx; margin-bottom: 12rpx; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
+
+/* Cards Icon */
+.cards-icon { width: 40rpx; height: 34rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 6rpx; }
+.cards-tab { position: absolute; top: -10rpx; left: 8rpx; width: 18rpx; height: 10rpx; border: 4rpx solid rgba(24,24,24,0.6); border-bottom: none; border-radius: 6rpx 6rpx 0 0; background: rgba(255,255,255,0.9); }
+.nav-item.active .cards-icon, .nav-item.active .cards-tab { border-color: #1A1A1A; }
+
+/* Chat Icon */
+.bubble { width: 36rpx; height: 28rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 12rpx; position: relative;}
+.tail { position: absolute; bottom: 0; right: 6rpx; width: 0; height: 0; border-left: 8rpx solid transparent; border-right: 0px solid transparent; border-bottom: 8rpx solid rgba(24,24,24,0.6); transform: translateY(6rpx) translateX(4rpx) rotate(-15deg); }
+.nav-item.active .bubble { border-color: #1A1A1A; }
+.nav-item.active .tail { border-bottom-color: #1A1A1A; }
+
+/* Surf Icon */
+.surf-icon { overflow: hidden; width: 36rpx; height: 36rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; display: flex; justify-content: center; align-items: center;}
+.wave { width: 40rpx; height: 20rpx; border-top: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; transform: translateY(4rpx); }
+.nav-item.active .surf-icon { border-color: #1A1A1A; }
+.nav-item.active .wave { border-top-color: #1A1A1A; }
+
+.nav-text { font-size: 12rpx; font-weight: bold; letter-spacing: 2.2rpx; color: rgba(24,24,24,0.72); }
+.nav-item.active .nav-text { color: #1A1A1A; }

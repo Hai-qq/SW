@@ -3,7 +3,8 @@
     "pages/onboarding/onboarding",
     "pages/home/home",
     "pages/discovery/discovery",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/chat/chat"
   ],
   "window": {
     "backgroundTextStyle": "light",

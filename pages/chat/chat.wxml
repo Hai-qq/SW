@@ -1,0 +1,46 @@
+<view class="container" style="padding-top: {{statusBarHeight}}px;">
+  <view class="header">
+    <text class="page-title">会话广场</text>
+  </view>
+
+  <scroll-view scroll-y="true" enable-flex class="chat-list">
+    <view class="chat-item" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+      <view class="avatar-ph"></view>
+      <view class="chat-info">
+        <view class="chat-name-row">
+          <text class="chat-name">同频用户 {{item}}</text>
+          <text class="chat-time">14:0{{item}}</text>
+        </view>
+        <view class="chat-preview">看到你的想法很有共鸣，希望能认识一下...</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部毛玻璃导航条 -->
+  <view class="bottom-nav">
+    <view class="nav-container">
+      <view class="nav-glass"></view>
+      <view class="nav-content">
+        <view class="nav-item" bindtap="goToDiscovery">
+          <view class="nav-icon surf-icon">
+            <view class="wave"></view>
+          </view>
+          <text class="nav-text">冲浪</text>
+        </view>
+        <view class="nav-item" bindtap="goToHome">
+          <view class="nav-icon cards-icon">
+            <view class="cards-tab"></view>
+          </view>
+          <text class="nav-text">真心话</text>
+        </view>
+        <view class="nav-item active">
+          <view class="nav-icon chat-icon">
+            <view class="bubble"></view>
+            <view class="tail"></view>
+          </view>
+          <text class="nav-text">小纸条</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
