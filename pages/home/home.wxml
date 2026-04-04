@@ -5,20 +5,46 @@
 
   <!-- 顶部导航区 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
-    <view class="header-content">
-      <view class="date-location">
-        <view class="registered-users" bindtap="goToProfile">
-          <view class="online-dot"></view>
-          <text>32,419 位同频者已加入</text>
-        </view>
+    <view class="header-content" style="margin-top: {{headerContentMT}}px; height: {{menuTriggerH}}px;">
+      <view class="registered-users" bindtap="goToProfile">
+        <view class="online-dot"></view>
+        <text>32,419 位同频者已加入</text>
       </view>
-      <!-- 右侧装饰网格图标 -->
-      <view class="grid-icon">
-        <view class="grid-dot"></view><view class="grid-dot"></view>
-        <view class="grid-dot"></view><view class="grid-dot"></view>
-        <view class="grid-dot"></view><view class="grid-dot"></view>
-        <view class="grid-dot"></view><view class="grid-dot"></view>
+    </view>
+  </view>
+
+  <!-- 功能菜单按钮: fixed 定位，紧贴胶囊左侧 -->
+  <view
+    class="menu-trigger"
+    style="right: {{menuTriggerRight}}px; top: {{menuTriggerTop}}px; height: {{menuTriggerH}}px;"
+    bindtap="toggleMenuPanel">
+    <view class="menu-dot-row">
+      <view class="menu-dot"></view>
+      <view class="menu-dot"></view>
+      <view class="menu-dot"></view>
+    </view>
+  </view>
+
+  <!-- 菜单面板遮罩 -->
+  <view class="menu-mask" wx:if="{{showMenuPanel}}" catchtap="closeMenuPanel"></view>
+
+  <!-- 菜单面板 -->
+  <view class="menu-panel" wx:if="{{showMenuPanel}}" style="top: calc({{statusBarHeight}}px + 88rpx);">
+    <text class="menu-panel-label">话题筛选</text>
+    <view class="menu-categories">
+      <view
+        class="menu-cat-chip {{currentTab === item ? 'active' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="index"
+        data-tab="{{item}}"
+        bindtap="selectCategory">
+        <text class="menu-cat-text">{{item}}</text>
       </view>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-profile-row" bindtap="goToProfile">
+      <text class="menu-profile-text">我的档案</text>
+      <text class="menu-profile-arrow">→</text>
     </view>
   </view>
 
@@ -49,17 +75,8 @@
       <view class="card-stack-layer back-one"></view>
       <view class="card-stack-layer back-two"></view>
       <view class="card-preview" style="transform: translateY(30rpx) scale({{previewScale}});">
-        <view class="card-preview-header">
-          <view class="user-info">
-            <image src="{{nextCard.user.avatar}}" class="card-avatar" mode="aspectFill"></image>
-            <view class="user-meta">
-              <text class="profile-name">{{nextCard.user.name}}的档案</text>
-              <text class="profile-tags">观点 · {{nextCard.tags}}</text>
-            </view>
-          </view>
-        </view>
         <view class="card-preview-body">
-          <text class="card-preview-text">“{{nextCard.content}}”</text>
+          <text class="card-preview-text">"{{nextCard.content}}"</text>
         </view>
       </view>
       <view 
@@ -69,13 +86,11 @@
         catchtouchmove="touchMove"
         catchtouchend="touchEnd">
         
-        <!-- 卡片头部: 用户信息 -->
-        <view class="card-header">
-          <view class="user-info">
-            <image src="{{currentCard.user.avatar}}" class="card-avatar" mode="aspectFill"></image>
-            <view class="user-meta">
-              <text class="profile-name">{{currentCard.user.name}}的档案</text>
-              <text class="profile-tags">观点 · {{currentCard.tags}}</text>
+        <!-- 卡片顶部: 标签 + 分享按钮 -->
+        <view class="card-top-row">
+          <view class="card-tags">
+            <view class="card-tag" wx:for="{{currentCard.tags}}" wx:key="index">
+              <text class="card-tag-text">{{item}}</text>
             </view>
           </view>
           <view class="share-trigger" bindtap="handleShare">
@@ -85,7 +100,7 @@
 
         <!-- 卡片正文: 观点文字 -->
         <view class="card-body">
-          <text class="opinion-text">“{{currentCard.content}}”</text>
+          <text class="opinion-text">"{{currentCard.content}}"</text>
         </view>
 
         <!-- 卡片底部: 同频数据条 -->
@@ -172,22 +187,15 @@
       <view class="nav-glass"></view>
       <view class="nav-content">
         <view class="nav-item" bindtap="goToDiscovery">
-          <view class="nav-icon surf-icon">
-            <view class="wave"></view>
-          </view>
+          <image src="/assets/icons/wave.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">冲浪</text>
         </view>
         <view class="nav-item active">
-          <view class="nav-icon cards-icon">
-            <view class="cards-tab"></view>
-          </view>
+          <image src="/assets/icons/cards_stack.svg" class="nav-svg-icon active-icon" mode="aspectFit"></image>
           <text class="nav-text">真心话</text>
         </view>
         <view class="nav-item" bindtap="goToChat">
-          <view class="nav-icon chat-icon">
-            <view class="bubble"></view>
-            <view class="tail"></view>
-          </view>
+          <image src="/assets/icons/note.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">小纸条</text>
         </view>
       </view>

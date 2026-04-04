@@ -6,7 +6,7 @@ const MOCK_CARDS = [
       name: 'SOFIA',
       avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLrAr37lhydIX_1LumoKueO-D-FbfMv-u9ccyCDSbEVfqJ30SBBxej5ljN8hbNo3G2jVjVsg2WfdnPfOkfl7GN9X8cOH1yUxB26QeajBgV7Lw35RgYOEXfsvS0HkpBsoVKeMjM9CAc-O7u9MjrggZZKYsAyASBH6La-bXbdmH3Y-BRxKQKGFPzCnSxhjOrr9Uhjf0VUlm5bQGfu33dk7Ok4kx6EM3vcj57j7Y1MtYMgULeBpRWSZC8BQyrnjDf2D_VTkIR0vWNJOI'
     },
-    tags: '态度 · 幽默',
+    tags: ['社会观察'],
     content: '坚定地认为《虎胆龙威》是一部圣诞电影。',
     agreePercent: 65,
     agreeAvatars: [
@@ -21,7 +21,7 @@ const MOCK_CARDS = [
       name: 'MARCUS',
       avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAn5HzxKpfPgAW1WfhKpnshh3KoTUthnkQQ01WXgHFpX-rvCaJgK448OBgBIjOw3Bdo3nog51RWfExCiH1lzpPrN6T8dnDenhtwbzbJJY2cNcSO_O4c1_JHMzrTYo2ObLjq18yEQ-FQc5q6nI4eWgTpGOU89zuSjxmqzJpQdHEEAFZaCT2TZY6nWoGc1LgZEQygHBRLBi04V6X_Qk_zTjIg-2jUGzf48j8s5kAugk1NVLCrzowRlMO5BB2CwLd6mpAkG-K9786mvQY'
     },
-    tags: '态度 · 生活',
+    tags: ['内心世界'],
     content: '认为晚上的效率永远比白天高。',
     agreePercent: 42,
     agreeAvatars: [
@@ -35,7 +35,7 @@ const MOCK_CARDS = [
       name: 'ELENA',
       avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnJoNUvpdNdhMH1dxfOqPQW_lusQ3CJSA1xm7sgVdpn2wfUhclcjunpwvbUuRB1OdNwfg4PjxB3JHTMgrb8S1LEhdb1JLE4tiOlYJ5YIgRTmGdq3X0iUwxTZEOuP9RHyiX0l6fQ3cEEaJ_0d0USv2apQ6LvdXpl5ydJ0YMa0RARk6lrYY8Wyr5Ec2hdx6YOgZF_eHLv6eVQ3FdtJ9nJjdGt7NEpqEB5GKRbVJcHRVS752Y2UmrRHsWKw9sQvnv3yH0u4cGcMph82k'
     },
-    tags: '价值观 · 真诚',
+    tags: ['价值观'],
     content: '相信真正成熟的人会先理解，再表达自己。',
     agreePercent: 71,
     agreeAvatars: [
@@ -60,6 +60,11 @@ Page({
   data: {
     statusBarHeight: 20,
     windowHeight: 800,
+    menuTriggerRight: 0,
+    menuTriggerTop: 0,
+    menuTriggerH: 32,
+    headerContentMT: 0,
+    showMenuPanel: false,
     currentTab: '全部',
     tabs: ['全部', '内心世界', '旅行与探索', '价值观', '社会观察'],
     recommendUsers: [
@@ -92,9 +97,14 @@ Page({
 
   onLoad() {
     const windowInfo = wx.getWindowInfo();
+    const menuBtn = wx.getMenuButtonBoundingClientRect();
     this.setData({
       statusBarHeight: windowInfo.statusBarHeight || 44,
       windowHeight: windowInfo.windowHeight,
+      menuTriggerRight: windowInfo.windowWidth - menuBtn.left + 8,
+      menuTriggerTop: menuBtn.top,
+      menuTriggerH: menuBtn.height,
+      headerContentMT: menuBtn.top - (windowInfo.statusBarHeight || 44),
       entryTime: Date.now()
     });
   },
@@ -298,6 +308,19 @@ Page({
 
   preventTouchMove() {
     // Empty function to prevent touch propagation on modal
+  },
+
+  toggleMenuPanel() {
+    this.setData({ showMenuPanel: !this.data.showMenuPanel });
+  },
+
+  closeMenuPanel() {
+    this.setData({ showMenuPanel: false });
+  },
+
+  selectCategory(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ currentTab: tab, showMenuPanel: false });
   },
 
   switchTab(e) {
