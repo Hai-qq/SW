@@ -17,7 +17,20 @@
 2. 在微信开发者工具中，选择 **导入项目**。
 3. 选择当前项目目录 (`SW`)。
 4. AppID 可以填入自己的测试号或是选择“测试号”。
-5. 即可在开发者工具中进行预览和调试。
+5. 若需联调真实后端，先启动 `.worktrees/backend-p0/backend` 中的 NestJS 服务。
+6. 即可在开发者工具中进行预览和调试。
+
+## Backend MVP 联调
+
+- 后端目录：`.worktrees/backend-p0/backend`
+- API 地址：`http://127.0.0.1:3005`
+- PostgreSQL：`localhost:5434`
+- 启动顺序：
+  1. `docker compose up -d`
+  2. `npm run prisma:generate`
+  3. `npm run prisma:migrate -- --name mvp_baseline`
+  4. `npm run prisma:seed`
+  5. `npm run start:dev`
 
 ## 🛠 技术栈
 
