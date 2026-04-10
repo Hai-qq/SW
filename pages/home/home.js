@@ -1,4 +1,7 @@
 // pages/home/home.js
+const { request } = require('../../utils/request');
+const { ensureSessionId } = require('../../utils/session');
+
 const MOCK_CARDS = [
   {
     id: 101,
@@ -48,6 +51,21 @@ const MOCK_CARDS = [
 
 function cloneCard(card) {
   return JSON.parse(JSON.stringify(card));
+}
+
+function normalizeCard(card) {
+  return {
+    id: Number(card.cardId),
+    user: {
+      name: card.user.name,
+      avatar: card.user.avatar
+    },
+    tags: Array.isArray(card.tags) ? card.tags : String(card.tags || '').split(' · ').filter(Boolean),
+    content: card.content,
+    agreePercent: card.stats?.agreePercent || 0,
+    agreeAvatars: card.stats?.agreeAvatars || [],
+    disagreeAvatar: card.stats?.disagreeAvatar || ''
+  };
 }
 
 function getNextMockCard(currentId) {
@@ -107,6 +125,8 @@ Page({
       headerContentMT: menuBtn.top - (windowInfo.statusBarHeight || 44),
       entryTime: Date.now()
     });
+    ensureSessionId();
+    this.loadNextCard();
   },
 
   onShareAppMessage() {
@@ -232,43 +252,100 @@ Page({
   },
 
   /* ====== Business Logic ====== */
-  recordSwipe(direction) {
-    // API Call to /api/v1/cards/swipe expected here
+  async recordSwipe(direction) {
+    const actionMap = {
+      right: 'agree',
+      left: 'disagree',
+      up: 'skip'
+    };
 
-    // Add to session count
-    let sc = this.data.swipeSessionCount + 1;
-    this.setData({ swipeSessionCount: sc });
+    try {
+      const result = await request({
+        url: '/api/v1/cards/swipe',
+        method: 'POST',
+        data: {
+          cardId: String(this.data.currentCard.id),
+          action: actionMap[direction],
+          sessionId: ensureSessionId(),
+          sourceTab: this.data.currentTab
+        }
+      });
 
-    // Check blindbox trigger (e.g., 3 valid swipes + 5 mins, simulating fast for demo)
-    const timeSpent = (Date.now() - this.data.entryTime) / 1000;
-    if (sc >= 3 && timeSpent > 30) {
-      this.checkBlindBoxTrigger();
+      this.setData({ swipeSessionCount: result.sessionSwipeCount });
+
+      const timeSpent = Math.floor((Date.now() - this.data.entryTime) / 1000);
+      if (result.sessionSwipeCount >= 3 && timeSpent > 30) {
+        await this.checkBlindBoxTrigger();
+      }
+    } catch (error) {
+      wx.showToast({
+        title: '上报失败',
+        icon: 'none'
+      });
     }
   },
 
-  loadNextCard() {
-    const currentCard = cloneCard(this.data.nextCard);
-    const nextCard = getNextMockCard(currentCard.id);
+  async loadNextCard() {
+    try {
+      const data = await request({
+        url: `/api/v1/cards/recommend?limit=2&category=${encodeURIComponent(this.data.currentTab)}&sessionId=${ensureSessionId()}`
+      });
+      const currentCard = data.items[0] ? normalizeCard(data.items[0]) : cloneCard(MOCK_CARDS[0]);
+      const nextCard = data.items[1]
+        ? normalizeCard(data.items[1])
+        : getNextMockCard(currentCard.id);
 
-    this.setData({
-      cardTranslateX: 0,
-      cardTranslateY: 0,
-      cardRotate: 0,
-      cardTransition: 'none',
-      previewScale: 0.978,
-      currentCard,
-      nextCard
-    });
+      this.setData({
+        cardTranslateX: 0,
+        cardTranslateY: 0,
+        cardRotate: 0,
+        cardTransition: 'none',
+        previewScale: 0.978,
+        currentCard,
+        nextCard
+      });
+    } catch (error) {
+      const currentCard = cloneCard(this.data.nextCard);
+      const nextCard = getNextMockCard(currentCard.id);
+
+      this.setData({
+        cardTranslateX: 0,
+        cardTranslateY: 0,
+        cardRotate: 0,
+        cardTransition: 'none',
+        previewScale: 0.978,
+        currentCard,
+        nextCard
+      });
+    }
   },
 
-  checkBlindBoxTrigger() {
-    // Trigger Blind Box UI
-    wx.showToast({
-      title: '触发盲盒弹窗!',
-      icon: 'none'
-    });
-    // 重置计数，避免重复触发
-    this.setData({ swipeSessionCount: 0 });
+  async checkBlindBoxTrigger() {
+    try {
+      const result = await request({
+        url: '/api/v1/matching/trigger-check',
+        method: 'POST',
+        data: {
+          sessionId: ensureSessionId(),
+          sessionSwipeCount: this.data.swipeSessionCount,
+          sessionDuration: Math.floor((Date.now() - this.data.entryTime) / 1000)
+        }
+      });
+
+      if (result.shouldTrigger && result.matchUser) {
+        wx.showToast({
+          title: `匹配到 ${result.matchUser.name}`,
+          icon: 'none'
+        });
+      }
+
+      this.setData({ swipeSessionCount: 0 });
+    } catch (error) {
+      wx.showToast({
+        title: '盲盒检查失败',
+        icon: 'none'
+      });
+    }
   },
 
   openCommentPanel() {
@@ -325,6 +402,7 @@ Page({
 
   switchTab(e) {
     this.setData({ currentTab: e.currentTarget.dataset.tab });
+    this.loadNextCard();
   },
 
   goToDiscovery() {
