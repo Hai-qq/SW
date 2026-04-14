@@ -1,4 +1,7 @@
 // pages/home/home.js
+const { request } = require('../../utils/request');
+const { ensureSessionId } = require('../../utils/session');
+
 const MOCK_CARDS = [
   {
     id: 101,
@@ -50,6 +53,21 @@ function cloneCard(card) {
   return JSON.parse(JSON.stringify(card));
 }
 
+function normalizeCard(card) {
+  return {
+    id: Number(card.cardId),
+    user: {
+      name: card.user.name,
+      avatar: card.user.avatar
+    },
+    tags: Array.isArray(card.tags) ? card.tags : String(card.tags || '').split(' · ').filter(Boolean),
+    content: card.content,
+    agreePercent: card.stats?.agreePercent || 0,
+    agreeAvatars: card.stats?.agreeAvatars || [],
+    disagreeAvatar: card.stats?.disagreeAvatar || ''
+  };
+}
+
 function getNextMockCard(currentId) {
   const currentIndex = MOCK_CARDS.findIndex((card) => card.id === currentId);
   const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % MOCK_CARDS.length;
@@ -92,7 +110,15 @@ Page({
     
     // Session tracking
     swipeSessionCount: 0,
-    entryTime: 0
+    entryTime: 0,
+    showBlindBox: false,
+    blindBoxStage: 'closed',
+    blindBoxTitle: '发现同频的人',
+    blindBoxCandidates: [],
+    selectedBlindBoxCandidate: null,
+    blindBoxOpening: false,
+    blindBoxSubmitting: false,
+    blindBoxEnteringChat: false
   },
 
   onLoad() {
@@ -107,6 +133,8 @@ Page({
       headerContentMT: menuBtn.top - (windowInfo.statusBarHeight || 44),
       entryTime: Date.now()
     });
+    ensureSessionId();
+    this.loadNextCard();
   },
 
   onShareAppMessage() {
@@ -232,43 +260,197 @@ Page({
   },
 
   /* ====== Business Logic ====== */
-  recordSwipe(direction) {
-    // API Call to /api/v1/cards/swipe expected here
+  async recordSwipe(direction) {
+    const actionMap = {
+      right: 'agree',
+      left: 'disagree',
+      up: 'skip'
+    };
 
-    // Add to session count
-    let sc = this.data.swipeSessionCount + 1;
-    this.setData({ swipeSessionCount: sc });
+    try {
+      const result = await request({
+        url: '/api/v1/cards/swipe',
+        method: 'POST',
+        data: {
+          cardId: String(this.data.currentCard.id),
+          action: actionMap[direction],
+          sessionId: ensureSessionId(),
+          sourceTab: this.data.currentTab
+        }
+      });
 
-    // Check blindbox trigger (e.g., 3 valid swipes + 5 mins, simulating fast for demo)
-    const timeSpent = (Date.now() - this.data.entryTime) / 1000;
-    if (sc >= 3 && timeSpent > 30) {
-      this.checkBlindBoxTrigger();
+      this.setData({ swipeSessionCount: result.sessionSwipeCount });
+
+      const timeSpent = Math.floor((Date.now() - this.data.entryTime) / 1000);
+      if (result.sessionSwipeCount >= 3 && timeSpent > 30) {
+        await this.checkBlindBoxTrigger();
+      }
+    } catch (error) {
+      wx.showToast({
+        title: '上报失败',
+        icon: 'none'
+      });
     }
   },
 
-  loadNextCard() {
-    const currentCard = cloneCard(this.data.nextCard);
-    const nextCard = getNextMockCard(currentCard.id);
+  async loadNextCard() {
+    try {
+      const data = await request({
+        url: `/api/v1/cards/recommend?limit=2&category=${encodeURIComponent(this.data.currentTab)}&sessionId=${ensureSessionId()}`
+      });
+      const currentCard = data.items[0] ? normalizeCard(data.items[0]) : cloneCard(MOCK_CARDS[0]);
+      const nextCard = data.items[1]
+        ? normalizeCard(data.items[1])
+        : getNextMockCard(currentCard.id);
+
+      this.setData({
+        cardTranslateX: 0,
+        cardTranslateY: 0,
+        cardRotate: 0,
+        cardTransition: 'none',
+        previewScale: 0.978,
+        currentCard,
+        nextCard
+      });
+    } catch (error) {
+      const currentCard = cloneCard(this.data.nextCard);
+      const nextCard = getNextMockCard(currentCard.id);
+
+      this.setData({
+        cardTranslateX: 0,
+        cardTranslateY: 0,
+        cardRotate: 0,
+        cardTransition: 'none',
+        previewScale: 0.978,
+        currentCard,
+        nextCard
+      });
+    }
+  },
+
+  async checkBlindBoxTrigger() {
+    try {
+      const result = await request({
+        url: '/api/v1/matching/trigger-check',
+        method: 'POST',
+        data: {
+          sessionId: ensureSessionId(),
+          sessionSwipeCount: this.data.swipeSessionCount,
+          sessionDuration: Math.floor((Date.now() - this.data.entryTime) / 1000)
+        }
+      });
+
+      if (result.shouldTrigger && result.blindBox && Array.isArray(result.blindBox.candidates)) {
+        this.setData({
+          showBlindBox: true,
+          blindBoxStage: 'prompt',
+          blindBoxTitle: result.blindBox.title || '发现同频的人',
+          blindBoxCandidates: result.blindBox.candidates.map((item) => ({
+            ...item,
+            hasAvatar: Boolean(item.avatar)
+          })),
+          selectedBlindBoxCandidate: null,
+          blindBoxOpening: false,
+          blindBoxSubmitting: false,
+          blindBoxEnteringChat: false
+        });
+        return;
+      }
+
+      this.setData({ swipeSessionCount: 0 });
+    } catch (error) {
+      wx.showToast({
+        title: '盲盒检查失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  openBlindBox() {
+    if (this.data.blindBoxOpening) {
+      return;
+    }
 
     this.setData({
-      cardTranslateX: 0,
-      cardTranslateY: 0,
-      cardRotate: 0,
-      cardTransition: 'none',
-      previewScale: 0.978,
-      currentCard,
-      nextCard
+      blindBoxOpening: true,
+      blindBoxStage: 'candidates'
     });
   },
 
-  checkBlindBoxTrigger() {
-    // Trigger Blind Box UI
-    wx.showToast({
-      title: '触发盲盒弹窗!',
-      icon: 'none'
+  closeBlindBox() {
+    this.setData({
+      showBlindBox: false,
+      blindBoxStage: 'closed',
+      blindBoxTitle: '发现同频的人',
+      blindBoxCandidates: [],
+      selectedBlindBoxCandidate: null,
+      blindBoxOpening: false,
+      blindBoxSubmitting: false,
+      blindBoxEnteringChat: false,
+      swipeSessionCount: 0
     });
-    // 重置计数，避免重复触发
-    this.setData({ swipeSessionCount: 0 });
+  },
+
+  async chooseBlindBoxCandidate(e) {
+    const userId = e.currentTarget.dataset.userId;
+    const candidate = this.data.blindBoxCandidates.find((item) => item.userId === userId);
+    if (!candidate || this.data.blindBoxSubmitting) {
+      return;
+    }
+
+    this.setData({ blindBoxSubmitting: true });
+    try {
+      const connection = await request({
+        url: '/api/v1/matching/connections',
+        method: 'POST',
+        data: {
+          candidateUserId: candidate.userId,
+          action: 'connect'
+        }
+      });
+
+      this.setData({
+        blindBoxStage: 'success',
+        blindBoxSubmitting: false,
+        selectedBlindBoxCandidate: {
+          ...candidate,
+          connectionId: connection.connectionId
+        }
+      });
+    } catch (error) {
+      this.setData({ blindBoxSubmitting: false });
+      wx.showToast({
+        title: '想认识失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  async enterBlindBoxChat() {
+    const candidate = this.data.selectedBlindBoxCandidate;
+    if (!candidate || !candidate.connectionId || this.data.blindBoxEnteringChat) {
+      return;
+    }
+
+    this.setData({ blindBoxEnteringChat: true });
+    try {
+      const conversation = await request({
+        url: '/api/v1/chat/conversations',
+        method: 'POST',
+        data: { connectionId: candidate.connectionId }
+      });
+
+      this.closeBlindBox();
+      wx.redirectTo({
+        url: `/pages/chat/chat?conversationId=${conversation.conversationId}`
+      });
+    } catch (error) {
+      this.setData({ blindBoxEnteringChat: false });
+      wx.showToast({
+        title: '进入小纸条失败',
+        icon: 'none'
+      });
+    }
   },
 
   openCommentPanel() {
@@ -310,6 +492,8 @@ Page({
     // Empty function to prevent touch propagation on modal
   },
 
+  noop() {},
+
   toggleMenuPanel() {
     this.setData({ showMenuPanel: !this.data.showMenuPanel });
   },
@@ -325,6 +509,7 @@ Page({
 
   switchTab(e) {
     this.setData({ currentTab: e.currentTarget.dataset.tab });
+    this.loadNextCard();
   },
 
   goToDiscovery() {

@@ -107,12 +107,13 @@
 
 | 项 | 值 |
 |----|----|
-| URL | `POST /api/v1/blind-box/trigger-check` |
+| URL | `POST /api/v1/matching/trigger-check` |
 | 触发条件 | 本次会话累计 ≥ 3 次有效划动 且 在线时长 > 30 秒 |
 
 **Request Body**
 ```json
 {
+  "sessionId": "session-001",
   "sessionSwipeCount": 3,
   "sessionDuration": 45
 }
@@ -122,10 +123,19 @@
 ```json
 {
   "shouldTrigger": true,
-  "matchUser": {
-    "userId": 302,
-    "name": "MARCUS",
-    "avatar": "https://..."
+  "blindBox": {
+    "triggerMode": "threshold",
+    "title": "发现同频的人",
+    "confirmText": "打开盲盒",
+    "cancelText": "稍后再说",
+    "candidates": [
+      {
+        "userId": "302",
+        "nickname": "MARCUS",
+        "avatar": "https://...",
+        "tags": ["价值观"]
+      }
+    ]
   }
 }
 ```
@@ -234,7 +244,7 @@
 | `POST /api/v1/onboarding/submit` | `onboarding.js animateSwipe` | 未实现，Mock |
 | `GET /api/v1/cards/recommend` | `home.js loadNextCard` | 未实现，Mock |
 | `POST /api/v1/cards/swipe` | `home.js recordSwipe` | 未实现，Mock |
-| `POST /api/v1/blind-box/trigger-check` | `home.js checkBlindBoxTrigger` | 未实现，Mock |
+| `POST /api/v1/matching/trigger-check` | `home.js checkBlindBoxTrigger` | 已实现，返回盲盒候选数据 |
 | `GET /api/v1/discovery/feed` | `discovery.js onLoad` | 未实现，Mock |
 | `POST /api/v1/discovery/publish` | `discovery.js openPublish` | 未实现，待开发 |
 | `GET /api/v1/profile/info` | `profile.js onLoad` | 未实现，Mock |

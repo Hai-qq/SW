@@ -1,4 +1,9 @@
 node_modules/
+.worktrees/
 .DS_Store
 project.private.config.json
 *.swp
+backend/.main-start*.log
+backend/.env
+backend/.tmp-start*.log
+backend/dist/

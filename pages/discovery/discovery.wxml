@@ -17,11 +17,15 @@
 
     <!-- Tabs -->
     <scroll-view scroll-x="true" class="tabs" show-scrollbar="false">
-      <view class="tab-item active"><text>ALL</text></view>
-      <view class="tab-item"><text>INTERNAL</text></view>
-      <view class="tab-item"><text>TRAVEL</text></view>
-      <view class="tab-item"><text>VALUES</text></view>
-      <view class="tab-item"><text>POLITICS</text></view>
+      <view
+        wx:for="{{tabs}}"
+        wx:key="*this"
+        class="tab-item {{currentTab === item ? 'active' : ''}}"
+        data-tab="{{item}}"
+        bindtap="switchTab"
+      >
+        <text>{{item}}</text>
+      </view>
     </scroll-view>
 
     <!-- Featured Thoughts Section -->
@@ -31,9 +35,9 @@
         <text style="font-size: 32rpx; color: #8c8c8c;">⋯</text>
       </view>
 
-      <view class="thought-card">
+      <view class="thought-card" wx:if="{{featuredItems.length}}">
         <view class="card-top">
-          <text class="card-title">如果时间可以倒流，你最想回到哪一年的夏天？</text>
+          <text class="card-title">{{featuredItems[0].title || featuredItems[0].content}}</text>
           <text style="font-size: 32rpx; color: #8C8C8C;">⋯</text>
         </view>
         <view class="stats">
@@ -41,20 +45,19 @@
             <view class="progress-bar-fill" style="width: 65%;"></view>
           </view>
           <view class="stats-text">
-            <text class="black-text">2008: 奥运与旧时光 (65%)</text>
-            <text>2019: 最后的安稳 (35%)</text>
+            <text class="black-text">{{featuredItems[0].category}} · {{featuredItems[0].author.nickname}}</text>
+            <text>{{featuredItems[0].stats.likeCount}} 喜欢 · {{featuredItems[0].stats.commentCount}} 评论</text>
           </view>
         </view>
         <view class="avatars-group">
           <view class="stack">
-            <image class="small-av" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxue1HnWTmY9jhMYkirM5bzPkGnNkeHG0Tk0XJF0yk5bF22dKPOBEwIrjYcOilieqt4WTL1683L0zErSr46zkUZNQOvn4m1tArSXRiUmG5ZPHtOwDpu8y8HABb22FcWnmeMrRBLXSjxA1Tcjv9EO8tN-IYr3DKO7BMTtAqmPdqXSxY_WXT8IZ2wXbLWi-UONpe5lanH5rggS57wrj7b9e2gEl7qOvUMzH6mlmCIwxFjXYFnvlth_I1kpC3xd_wpbKkH1COulhagGM"></image>
-            <image class="small-av" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHdQEsEnzrPY4Maldwuhf1R7g2NwrEdLpzvv9jbCMnNanOY3_j7zJ2kQN6CN4chMFRfiz4n8TXbPyhGIVdxhrAT6jupWsPjj1Tphv1Z9OCmHGlhPqlZ7PcMHvi_W_oD7sX26V2y5vs0OK-c-m-QNOCaqi2sClfxwZXRaTGpTzch5pigxE5RjrrT8XVcgbm__qYku4RZ7rDhgwRXSoASJUZDHivbxokbf9IXYQnOMwE82LmPetLTbFqH8iKqXgemV0IgAD6u3g-kIk"></image>
-            <view class="small-av more-av">+128</view>
+            <image class="small-av" src="{{featuredItems[0].author.avatar}}"></image>
+            <view class="small-av more-av">+{{featuredItems[0].stats.likeCount}}</view>
           </view>
           <text class="hint-msg">正在共鸣中...</text>
         </view>
         <view class="card-quote">
-          <text>"那年夏天没有口罩，只有吃不完的碎碎冰和永远做不完的暑假作业..."</text>
+          <text>"{{featuredItems[0].content}}"</text>
         </view>
       </view>
 
@@ -73,16 +76,10 @@
       <view class="timeline">
         <view class="timeline-line"></view>
         
-        <view class="timeline-item">
-          <view class="timeline-dot black-dot"></view>
-          <text class="timeline-meta">12 MINS AGO · 匿名猫</text>
-          <text class="timeline-content">在大城市待久了，有时候真的分不清是在生活，还是只是在维持生存的体征。今天下班路上的晚霞好美，突然好想哭。</text>
-        </view>
-
-        <view class="timeline-item">
-          <view class="timeline-dot gray-dot"></view>
-          <text class="timeline-meta">45 MINS AGO · 荒原狼</text>
-          <text class="timeline-content">辞职后的第30天。没有焦虑，只有一种如释重负的空虚感。我开始练习每天只做一个决定：中午吃什么。</text>
+        <view class="timeline-item" wx:for="{{timelineItems}}" wx:key="feedId">
+          <view class="timeline-dot {{index === 0 ? 'black-dot' : 'gray-dot'}}"></view>
+          <text class="timeline-meta">{{item.author.nickname}} · {{item.category}}</text>
+          <text class="timeline-content">{{item.content}}</text>
         </view>
       </view>
     </view>
