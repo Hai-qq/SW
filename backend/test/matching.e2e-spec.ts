@@ -23,7 +23,7 @@ describe('Matching (e2e)', () => {
     await app.close();
   });
 
-  it('returns a match candidate once session thresholds are met', async () => {
+  it('returns a blind box payload with three candidates once thresholds are met', async () => {
     await request(app.getHttpServer())
       .post('/api/v1/cards/swipe')
       .set('x-test-user-id', '1')
@@ -49,7 +49,18 @@ describe('Matching (e2e)', () => {
       .expect(201);
 
     expect(response.body.data).toMatchObject({
-      shouldTrigger: expect.any(Boolean),
+      shouldTrigger: true,
+      blindBox: {
+        triggerMode: 'threshold',
+        candidates: expect.any(Array),
+      },
+    });
+    expect(response.body.data.blindBox.candidates).toHaveLength(3);
+    expect(response.body.data.blindBox.candidates[0]).toMatchObject({
+      userId: expect.any(String),
+      nickname: expect.any(String),
+      avatar: expect.any(String),
+      tags: expect.any(Array),
     });
   });
 
@@ -67,5 +78,24 @@ describe('Matching (e2e)', () => {
       .expect(201);
 
     expect(second.body.data).toMatchObject({ shouldTrigger: false });
+  });
+
+  it('keeps the no-trigger response when the same session was already checked', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/matching/trigger-check')
+      .set('x-test-user-id', '1')
+      .send({ sessionId: 'session-blind-box-2', sessionSwipeCount: 3, sessionDuration: 45 })
+      .expect(201);
+
+    const second = await request(app.getHttpServer())
+      .post('/api/v1/matching/trigger-check')
+      .set('x-test-user-id', '1')
+      .send({ sessionId: 'session-blind-box-2', sessionSwipeCount: 3, sessionDuration: 45 })
+      .expect(201);
+
+    expect(second.body.data).toEqual({
+      shouldTrigger: false,
+      reason: 'already_checked',
+    });
   });
 });

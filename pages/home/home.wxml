@@ -211,4 +211,35 @@
     </view>
   </view>
 
+  <view class="blind-box-mask" wx:if="{{showBlindBox}}" catchtouchmove="preventTouchMove">
+    <view class="blind-box-panel" catchtap="noop">
+      <view wx:if="{{blindBoxStage === 'prompt'}}" class="blind-box-stage">
+        <text class="blind-box-title">{{blindBoxTitle}}</text>
+        <text class="blind-box-desc">你解锁了 3 位同频候选人，打开看看谁最想认识。</text>
+        <button class="blind-box-primary" bindtap="openBlindBox">打开盲盒</button>
+        <button class="blind-box-secondary" bindtap="closeBlindBox">稍后再说</button>
+      </view>
+
+      <view wx:elif="{{blindBoxStage === 'candidates'}}" class="blind-box-stage">
+        <text class="blind-box-title">选择想认识的人</text>
+        <view class="blind-box-candidate-list">
+          <view class="blind-box-candidate" wx:for="{{blindBoxCandidates}}" wx:key="userId">
+            <image wx:if="{{item.hasAvatar}}" class="blind-box-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+            <view wx:else class="blind-box-avatar blind-box-avatar-placeholder"></view>
+            <text class="blind-box-name">{{item.nickname}}</text>
+            <text class="blind-box-tag">{{item.tags[0]}}</text>
+            <button class="blind-box-primary small" data-user-id="{{item.userId}}" bindtap="chooseBlindBoxCandidate" loading="{{blindBoxSubmitting}}">想认识</button>
+          </view>
+        </view>
+      </view>
+
+      <view wx:elif="{{blindBoxStage === 'success'}}" class="blind-box-stage">
+        <text class="blind-box-title">匹配成功</text>
+        <text class="blind-box-desc">你和 {{selectedBlindBoxCandidate.nickname}} 已互相想认识。</text>
+        <button class="blind-box-primary" bindtap="enterBlindBoxChat" loading="{{blindBoxEnteringChat}}">进入小纸条</button>
+        <button class="blind-box-secondary" bindtap="closeBlindBox">稍后再去</button>
+      </view>
+    </view>
+  </view>
+
 </view>

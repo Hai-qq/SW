@@ -110,7 +110,15 @@ Page({
     
     // Session tracking
     swipeSessionCount: 0,
-    entryTime: 0
+    entryTime: 0,
+    showBlindBox: false,
+    blindBoxStage: 'closed',
+    blindBoxTitle: '发现同频的人',
+    blindBoxCandidates: [],
+    selectedBlindBoxCandidate: null,
+    blindBoxOpening: false,
+    blindBoxSubmitting: false,
+    blindBoxEnteringChat: false
   },
 
   onLoad() {
@@ -332,17 +340,114 @@ Page({
         }
       });
 
-      if (result.shouldTrigger && result.matchUser) {
-        wx.showToast({
-          title: `匹配到 ${result.matchUser.name}`,
-          icon: 'none'
+      if (result.shouldTrigger && result.blindBox && Array.isArray(result.blindBox.candidates)) {
+        this.setData({
+          showBlindBox: true,
+          blindBoxStage: 'prompt',
+          blindBoxTitle: result.blindBox.title || '发现同频的人',
+          blindBoxCandidates: result.blindBox.candidates.map((item) => ({
+            ...item,
+            hasAvatar: Boolean(item.avatar)
+          })),
+          selectedBlindBoxCandidate: null,
+          blindBoxOpening: false,
+          blindBoxSubmitting: false,
+          blindBoxEnteringChat: false
         });
+        return;
       }
 
       this.setData({ swipeSessionCount: 0 });
     } catch (error) {
       wx.showToast({
         title: '盲盒检查失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  openBlindBox() {
+    if (this.data.blindBoxOpening) {
+      return;
+    }
+
+    this.setData({
+      blindBoxOpening: true,
+      blindBoxStage: 'candidates'
+    });
+  },
+
+  closeBlindBox() {
+    this.setData({
+      showBlindBox: false,
+      blindBoxStage: 'closed',
+      blindBoxTitle: '发现同频的人',
+      blindBoxCandidates: [],
+      selectedBlindBoxCandidate: null,
+      blindBoxOpening: false,
+      blindBoxSubmitting: false,
+      blindBoxEnteringChat: false,
+      swipeSessionCount: 0
+    });
+  },
+
+  async chooseBlindBoxCandidate(e) {
+    const userId = e.currentTarget.dataset.userId;
+    const candidate = this.data.blindBoxCandidates.find((item) => item.userId === userId);
+    if (!candidate || this.data.blindBoxSubmitting) {
+      return;
+    }
+
+    this.setData({ blindBoxSubmitting: true });
+    try {
+      const connection = await request({
+        url: '/api/v1/matching/connections',
+        method: 'POST',
+        data: {
+          candidateUserId: candidate.userId,
+          action: 'connect'
+        }
+      });
+
+      this.setData({
+        blindBoxStage: 'success',
+        blindBoxSubmitting: false,
+        selectedBlindBoxCandidate: {
+          ...candidate,
+          connectionId: connection.connectionId
+        }
+      });
+    } catch (error) {
+      this.setData({ blindBoxSubmitting: false });
+      wx.showToast({
+        title: '想认识失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  async enterBlindBoxChat() {
+    const candidate = this.data.selectedBlindBoxCandidate;
+    if (!candidate || !candidate.connectionId || this.data.blindBoxEnteringChat) {
+      return;
+    }
+
+    this.setData({ blindBoxEnteringChat: true });
+    try {
+      const conversation = await request({
+        url: '/api/v1/chat/conversations',
+        method: 'POST',
+        data: { connectionId: candidate.connectionId }
+      });
+
+      this.closeBlindBox();
+      wx.redirectTo({
+        url: `/pages/chat/chat?conversationId=${conversation.conversationId}`
+      });
+    } catch (error) {
+      this.setData({ blindBoxEnteringChat: false });
+      wx.showToast({
+        title: '进入小纸条失败',
         icon: 'none'
       });
     }
@@ -386,6 +491,8 @@ Page({
   preventTouchMove() {
     // Empty function to prevent touch propagation on modal
   },
+
+  noop() {},
 
   toggleMenuPanel() {
     this.setData({ showMenuPanel: !this.data.showMenuPanel });

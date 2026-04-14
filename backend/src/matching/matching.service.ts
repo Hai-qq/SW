@@ -59,51 +59,61 @@ export class MatchingService {
       },
     });
 
-    const best = candidates
+    const ranked = candidates
       .map((candidate) => {
         const candidateTopics = candidate.profileTags
           .filter((tag) => tag.tagType === 'topic_preference')
           .map((tag) => tag.tagValue);
         const sharedTopics = userTopics.filter((topic) => candidateTopics.includes(topic));
         const score = sharedTopics.length * 25 + (candidate.avatarUrl ? 10 : 0) + 5;
+        const tags = sharedTopics.slice(0, 2);
         const reason =
           sharedTopics.length > 0
             ? `你们都更关注${sharedTopics[0]}话题`
             : '你们最近的活跃与表达节奏接近';
 
-        return { candidate, score, reason };
+        return { candidate, score, reason, tags };
       })
-      .sort((a, b) => b.score - a.score)[0];
+      .sort((a, b) => b.score - a.score);
+    const selected = ranked.slice(0, 3);
+    const primary = selected[0];
 
     await this.prisma.userSession.update({
       where: { sessionId: dto.sessionId },
-      data: { blindBoxChecked: true, blindBoxTriggered: Boolean(best) },
+      data: { blindBoxChecked: true, blindBoxTriggered: Boolean(primary) },
     });
 
     await this.prisma.matchEvent.create({
       data: {
         userId,
-        candidateUserId: best?.candidate.id,
+        candidateUserId: primary?.candidate.id,
         sessionId: dto.sessionId,
-        triggerReason: best?.reason ?? 'no_candidate',
-        matchScore: best?.score ?? null,
-        resultStatus: best ? 'matched' : 'no_match',
+        triggerReason: primary?.reason ?? 'no_candidate',
+        matchScore: primary?.score ?? null,
+        resultStatus: primary ? 'matched' : 'no_match',
       },
     });
 
-    if (!best) {
+    if (!primary) {
       return { shouldTrigger: false, reason: 'no_candidate' };
     }
 
     return {
       shouldTrigger: true,
-      matchUser: {
-        userId: best.candidate.id.toString(),
-        name: best.candidate.nickname,
-        avatar: best.candidate.avatarUrl ?? '',
+      blindBox: {
+        triggerMode: 'threshold',
+        title: '发现同频的人',
+        confirmText: '打开盲盒',
+        cancelText: '稍后再说',
+        candidates: selected.map((item) => ({
+          userId: item.candidate.id.toString(),
+          nickname: item.candidate.nickname,
+          avatar: item.candidate.avatarUrl ?? '',
+          tags: item.tags.length > 0 ? item.tags : ['同频'],
+        })),
       },
-      matchReason: best.reason,
-      matchScore: best.score,
+      matchReason: primary.reason,
+      matchScore: primary.score,
     };
   }
 }
