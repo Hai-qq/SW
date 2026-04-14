@@ -1,0 +1,80 @@
+<view class="page">
+  <scroll-view scroll-y="true" class="page-scroll">
+    <view class="hero">
+      <text class="eyebrow">V2 Profile Editing</text>
+      <text class="title">完善你的档案，让同频更具体一点</text>
+      <text class="subtitle">这里保存的每一项，都会直接写回本地 NestJS API。</text>
+    </view>
+
+    <view class="card">
+      <text class="card-title">基础资料</text>
+
+      <view class="field">
+        <text class="label">昵称</text>
+        <input class="input" value="{{form.nickname}}" data-field="nickname" bindinput="onInputChange" placeholder="输入昵称" />
+      </view>
+
+      <view class="field">
+        <text class="label">城市</text>
+        <input class="input" value="{{form.city}}" data-field="city" bindinput="onInputChange" placeholder="输入城市" />
+      </view>
+
+      <view class="field">
+        <text class="label">签名</text>
+        <textarea class="textarea" value="{{form.signature}}" data-field="signature" bindinput="onInputChange" placeholder="说点你在意的事" maxlength="120"></textarea>
+      </view>
+
+      <view class="field">
+        <text class="label">MBTI</text>
+        <picker mode="selector" range="{{mbtiOptions}}" value="{{mbtiIndex}}" bindchange="onMbtiChange">
+          <view class="picker">{{mbtiLabel}}</view>
+        </picker>
+      </view>
+
+      <view class="field">
+        <text class="label">性别</text>
+        <picker mode="selector" range="{{genderOptions}}" value="{{genderIndex}}" bindchange="onGenderChange">
+          <view class="picker">{{genderLabel}}</view>
+        </picker>
+      </view>
+
+      <view class="field">
+        <text class="label">年龄段</text>
+        <picker mode="selector" range="{{ageRangeOptions}}" value="{{ageRangeIndex}}" bindchange="onAgeRangeChange">
+          <view class="picker">{{ageRangeLabel}}</view>
+        </picker>
+      </view>
+
+      <view class="field">
+        <text class="label">感情状态</text>
+        <picker mode="selector" range="{{relationshipOptions}}" value="{{relationshipIndex}}" bindchange="onRelationshipChange">
+          <view class="picker">{{relationshipLabel}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">照片墙</text>
+
+      <view class="add-photo-row">
+        <input class="input photo-input" value="{{newPhotoUrl}}" bindinput="onNewPhotoUrlChange" placeholder="粘贴照片 URL" />
+        <button class="secondary-btn add-btn" bindtap="addPhoto">新增照片</button>
+      </view>
+
+      <view wx:for="{{photos}}" wx:key="photoId" class="photo-row">
+        <image class="photo-thumb" src="{{item.photoUrl}}"></image>
+        <view class="photo-main">
+          <text class="photo-url">{{item.photoUrl}}</text>
+          <text class="photo-meta">排序 {{item.sortOrder}}</text>
+        </view>
+        <view class="photo-actions">
+          <button class="tiny-btn" data-photo-id="{{item.photoId}}" bindtap="movePhotoUp">上移</button>
+          <button class="tiny-btn" data-photo-id="{{item.photoId}}" bindtap="movePhotoDown">下移</button>
+          <button class="tiny-btn danger-btn" data-photo-id="{{item.photoId}}" bindtap="deletePhoto">删除</button>
+        </view>
+      </view>
+    </view>
+
+    <button class="primary-btn" loading="{{saving}}" bindtap="saveProfile">保存资料</button>
+  </scroll-view>
+</view>

@@ -4,10 +4,10 @@
 
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
     <view class="header-inner">
-      <view class="icon-btn"><text style="font-size: 40rpx; font-weight: 300;">☰</text></view>
+      <view class="icon-btn" bindtap="goBack"><text style="font-size: 56rpx; font-weight: 300;">‹</text></view>
       <text class="logo-text">Same Wavelength</text>
       <view class="avatar-wrap-small">
-        <image class="avatar-small" src="{{profile.photos[0] || ''}}"></image>
+        <image wx:if="{{profile.hasPrimaryPhoto}}" class="avatar-small" src="{{profile.primaryPhoto}}"></image>
       </view>
     </view>
   </view>
@@ -17,16 +17,17 @@
     <!-- Profile Header -->
     <view class="profile-header">
       <view class="big-avatar-wrap">
-        <image class="big-avatar" src="{{profile.photos[0] || ''}}"></image>
+        <image wx:if="{{profile.hasPrimaryPhoto}}" class="big-avatar" src="{{profile.primaryPhoto}}"></image>
         <view class="avatar-ring"></view>
       </view>
 
-      <text class="user-name">{{profile.nickname || '加载中'}}</text>
+      <text class="user-name">{{profile.nicknameText}}</text>
       <view class="badges">
-        <view class="badge white-badge"><text>{{profile.gender || '-'}} {{profile.age || '-'}}</text></view>
-        <view class="badge black-badge"><text>{{profile.mbti || '-'}}</text></view>
+        <view class="badge white-badge"><text>{{profile.genderAgeText}}</text></view>
+        <view class="badge black-badge"><text>{{profile.mbtiText}}</text></view>
       </view>
-      <text class="user-desc">"{{profile.signature || ''}}"</text>
+      <text class="user-desc">"{{profile.signatureText}}"</text>
+      <button class="edit-profile-btn" bindtap="goToEditProfile">编辑资料</button>
     </view>
 
     <!-- Stats -->
@@ -89,11 +90,14 @@
     <view class="section">
       <view class="section-top">
         <text class="sec-title">Photo Wall</text>
-        <text class="sec-meta">{{profile.photos.length}} PHOTOS</text>
+        <text class="sec-meta">{{profile.photoCountText}}</text>
       </view>
       <view class="photo-grid">
-        <image wx:for="{{profile.photos}}" wx:key="*this" class="grid-img" src="{{item}}"></image>
-        <view class="add-photo-btn"><text style="font-size: 60rpx; color: rgba(0,0,0,0.3);">+</text></view>
+        <block wx:for="{{profile.visiblePhotos}}" wx:key="photoId">
+          <image wx:if="{{item.hasPhoto}}" class="grid-img" src="{{item.photoUrl}}"></image>
+          <view wx:if="{{!item.hasPhoto}}" class="grid-img photo-placeholder"></view>
+        </block>
+        <view class="add-photo-btn" bindtap="goToEditProfile"><text style="font-size: 60rpx; color: rgba(0,0,0,0.3);">+</text></view>
       </view>
     </view>
 
@@ -103,6 +107,10 @@
       <view class="history-list">
         <view class="history-item">
           <view class="his-left"><text style="font-size: 32rpx; font-weight: 300; margin-right: 12rpx;">🕒</text><text class="his-text">浏览历史</text></view>
+          <text style="font-size: 32rpx; color: #8C8C8C;">〉</text>
+        </view>
+        <view class="history-item" bindtap="goToConnections">
+          <view class="his-left"><text style="font-size: 32rpx; font-weight: 300; margin-right: 12rpx;">∞</text><text class="his-text">我的连接</text></view>
           <text style="font-size: 32rpx; color: #8C8C8C;">〉</text>
         </view>
         <view class="history-item">
@@ -119,31 +127,5 @@
 
 
 </scroll-view>
-
-  <!-- 底部固定毛玻璃导航 (在 scroll-view 外，避免 fixed 定位失效) -->
-  <view class="bottom-nav">
-    <view class="nav-container">
-      <view class="nav-glass"></view>
-      <view class="nav-content">
-        <view class="nav-item" bindtap="goToDiscovery">
-          <view class="nav-icon stories-icon"></view>
-          <text class="nav-text">真心话</text>
-        </view>
-        <view class="nav-item" bindtap="goToHome">
-          <view class="nav-icon cards-icon">
-            <view class="cards-tab"></view>
-          </view>
-          <text class="nav-text">首页</text>
-        </view>
-        <view class="nav-item active">
-          <view class="nav-icon profile-icon">
-            <view class="profile-icon-head"></view>
-            <view class="profile-icon-body"></view>
-          </view>
-          <text class="nav-text">我的档案</text>
-        </view>
-      </view>
-    </view>
-  </view>
 
 </view>

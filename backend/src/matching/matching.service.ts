@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ListConnectionsDto } from './dto/list-connections.dto';
 import { TriggerCheckDto } from './dto/trigger-check.dto';
+import { UpsertConnectionDto } from './dto/upsert-connection.dto';
 
 @Injectable()
 export class MatchingService {
@@ -105,5 +107,92 @@ export class MatchingService {
       matchReason: best.reason,
       matchScore: best.score,
     };
+  }
+
+  async upsertConnection(userId: bigint, dto: UpsertConnectionDto) {
+    const candidateUserId = this.parseBigInt(dto.candidateUserId, 'invalid_candidate_user_id');
+    if (candidateUserId === userId) {
+      throw new BadRequestException('cannot_connect_self');
+    }
+
+    if (dto.matchEventId) {
+      const matchEventId = this.parseBigInt(dto.matchEventId, 'invalid_match_event_id');
+      const matchEvent = await this.prisma.matchEvent.findFirst({
+        where: {
+          id: matchEventId,
+          userId,
+        },
+      });
+
+      if (!matchEvent) {
+        throw new NotFoundException('match_event_not_found');
+      }
+    }
+
+    const status = dto.action === 'connect' ? 'connected' : 'hidden';
+
+    const connection = await this.prisma.userConnection.upsert({
+      where: {
+        userId_targetUserId: {
+          userId,
+          targetUserId: candidateUserId,
+        },
+      },
+      create: {
+        userId,
+        targetUserId: candidateUserId,
+        sourceMatchEventId: dto.matchEventId
+          ? this.parseBigInt(dto.matchEventId, 'invalid_match_event_id')
+          : null,
+        status,
+      },
+      update: {
+        sourceMatchEventId: dto.matchEventId
+          ? this.parseBigInt(dto.matchEventId, 'invalid_match_event_id')
+          : undefined,
+        status,
+      },
+    });
+
+    return {
+      connectionId: connection.id.toString(),
+      status: connection.status,
+    };
+  }
+
+  async listConnections(userId: bigint, dto: ListConnectionsDto) {
+    const items = await this.prisma.userConnection.findMany({
+      where: {
+        userId,
+        ...(dto.status ? { status: dto.status } : {}),
+      },
+      include: {
+        targetUser: true,
+        matchEvent: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      items: items.map((item) => ({
+        connectionId: item.id.toString(),
+        status: item.status,
+        createdAt: item.createdAt.toISOString(),
+        matchReason: item.matchEvent?.triggerReason ?? '',
+        targetUser: {
+          userId: item.targetUser.id.toString(),
+          nickname: item.targetUser.nickname,
+          avatar: item.targetUser.avatarUrl ?? '',
+        },
+      })),
+    };
+  }
+
+  private parseBigInt(value: string, message: string) {
+    try {
+      return BigInt(value);
+    } catch {
+      throw new BadRequestException(message);
+    }
   }
 }

@@ -9,6 +9,8 @@ datasource db {
 
 model User {
   id                   BigInt   @id @default(autoincrement())
+  wechatOpenid         String?  @unique
+  wechatUnionid        String?
   nickname             String
   avatarUrl            String?
   gender               String?
@@ -22,15 +24,39 @@ model User {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  authSessions         UserAuthSession[]
   onboardingAnswers    OnboardingAnswer[]
   profileTags          UserProfileTag[]
   authoredCards        Card[]             @relation("CardAuthor")
   cardSwipes           CardSwipe[]
+  cardFeedback          CardFeedback[]
+  cardComments          CardComment[]      @relation("CardCommentAuthor")
   sessions             UserSession[]
   matchEvents          MatchEvent[]       @relation("MatchRequester")
   candidateMatchEvents MatchEvent[]       @relation("MatchCandidate")
+  ownedConnections     UserConnection[]   @relation("UserConnectionOwner")
+  targetConnections    UserConnection[]   @relation("UserConnectionTarget")
+  conversationsA       Conversation[]     @relation("ConversationUserA")
+  conversationsB       Conversation[]     @relation("ConversationUserB")
+  sentMessages         Message[]          @relation("MessageSender")
+  conversationReads    ConversationReadState[]
   discoveryPosts       DiscoveryPost[]
+  discoveryReactions   DiscoveryReaction[]
+  discoveryComments    DiscoveryComment[] @relation("DiscoveryCommentAuthor")
   photos               UserPhoto[]
+}
+
+model UserAuthSession {
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt
+  accessToken String   @unique
+  source      String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
 }
 
 model OnboardingAnswer {
@@ -69,6 +95,7 @@ model Card {
   agreeCount    Int      @default(0)
   disagreeCount Int      @default(0)
   skipCount     Int      @default(0)
+  commentCount  Int      @default(0)
   exposureCount Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -76,6 +103,8 @@ model Card {
   author User? @relation("CardAuthor", fields: [authorUserId], references: [id])
   exposures CardExposure[]
   swipes CardSwipe[]
+  feedback CardFeedback[]
+  comments CardComment[]
 }
 
 model CardExposure {
@@ -111,6 +140,38 @@ model CardSwipe {
   @@unique([userId, cardId])
 }
 
+model CardFeedback {
+  id           BigInt   @id @default(autoincrement())
+  userId       BigInt
+  cardId       BigInt
+  feedbackType String
+  category     String?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+
+  @@unique([userId, cardId, feedbackType])
+  @@index([userId, createdAt])
+  @@index([category])
+}
+
+model CardComment {
+  id           BigInt   @id @default(autoincrement())
+  cardId       BigInt
+  authorUserId BigInt
+  content      String
+  status       String   @default("published")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  card   Card @relation(fields: [cardId], references: [id])
+  author User @relation("CardCommentAuthor", fields: [authorUserId], references: [id])
+
+  @@index([cardId, createdAt])
+  @@index([authorUserId, createdAt])
+}
+
 model UserSession {
   id                 BigInt   @id @default(autoincrement())
   sessionId          String   @unique
@@ -138,6 +199,74 @@ model MatchEvent {
 
   user      User  @relation("MatchRequester", fields: [userId], references: [id])
   candidate User? @relation("MatchCandidate", fields: [candidateUserId], references: [id])
+  connections UserConnection[]
+}
+
+model UserConnection {
+  id                 BigInt   @id @default(autoincrement())
+  userId             BigInt
+  targetUserId       BigInt
+  sourceMatchEventId BigInt?
+  status             String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user       User       @relation("UserConnectionOwner", fields: [userId], references: [id])
+  targetUser User       @relation("UserConnectionTarget", fields: [targetUserId], references: [id])
+  matchEvent  MatchEvent? @relation(fields: [sourceMatchEventId], references: [id])
+  conversation Conversation?
+
+  @@unique([userId, targetUserId])
+  @@index([userId, status, createdAt])
+}
+
+model Conversation {
+  id              BigInt    @id @default(autoincrement())
+  connectionId    BigInt    @unique
+  userAId         BigInt
+  userBId         BigInt
+  lastMessageText String?
+  lastMessageAt   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  connection UserConnection @relation(fields: [connectionId], references: [id])
+  userA      User           @relation("ConversationUserA", fields: [userAId], references: [id])
+  userB      User           @relation("ConversationUserB", fields: [userBId], references: [id])
+  messages   Message[]
+  readStates ConversationReadState[]
+
+  @@index([userAId, updatedAt])
+  @@index([userBId, updatedAt])
+}
+
+model Message {
+  id             BigInt   @id @default(autoincrement())
+  conversationId BigInt
+  senderUserId   BigInt
+  content        String
+  messageType    String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  sender       User         @relation("MessageSender", fields: [senderUserId], references: [id])
+
+  @@index([conversationId, createdAt])
+  @@index([senderUserId, createdAt])
+}
+
+model ConversationReadState {
+  id             BigInt   @id @default(autoincrement())
+  conversationId BigInt
+  userId         BigInt
+  lastReadAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+  @@index([userId, updatedAt])
 }
 
 model DiscoveryPost {
@@ -155,6 +284,38 @@ model DiscoveryPost {
   updatedAt    DateTime @updatedAt
 
   author User @relation(fields: [authorUserId], references: [id])
+  reactions DiscoveryReaction[]
+  comments DiscoveryComment[]
+}
+
+model DiscoveryReaction {
+  id           BigInt   @id @default(autoincrement())
+  postId       BigInt
+  userId       BigInt
+  reactionType String
+  createdAt    DateTime @default(now())
+
+  post DiscoveryPost @relation(fields: [postId], references: [id])
+  user User          @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId, reactionType])
+  @@index([userId, createdAt])
+}
+
+model DiscoveryComment {
+  id           BigInt   @id @default(autoincrement())
+  postId       BigInt
+  authorUserId BigInt
+  content      String
+  status       String   @default("published")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  post   DiscoveryPost @relation(fields: [postId], references: [id])
+  author User          @relation("DiscoveryCommentAuthor", fields: [authorUserId], references: [id])
+
+  @@index([postId, createdAt])
+  @@index([authorUserId, createdAt])
 }
 
 model UserPhoto {

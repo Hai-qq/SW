@@ -7,12 +7,12 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 
 .header { width: 100%; position: fixed; top: 0; z-index: 50; background: rgba(245, 243, 237, 0.8); backdrop-filter: blur(20px); }
 .header-inner { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 40rpx; }
-.icon-btn { display: flex; align-items: center; justify-content: center; width: 64rpx; height: 64rpx; }
+.icon-btn { display: flex; align-items: center; justify-content: center; width: 64rpx; height: 64rpx; border-radius: 8rpx; }
 .logo-text { font-family: 'Noto Serif', serif; font-style: italic; font-size: 36rpx; letter-spacing: -1rpx; }
 .avatar-wrap-small { width: 64rpx; height: 64rpx; border-radius: 50%; overflow: hidden; border: 2rpx solid rgba(0,0,0,0.1); }
 .avatar-small { width: 100%; height: 100%; }
 
-.main-content { padding-top: 180rpx; padding-bottom: 240rpx; padding-left: 40rpx; padding-right: 40rpx; }
+.main-content { padding-top: 180rpx; padding-bottom: 64rpx; padding-left: 40rpx; padding-right: 40rpx; }
 
 /* Profile Header */
 .profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 60rpx; }
@@ -29,6 +29,7 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 .white-badge { background: #FFF; border: 2rpx solid rgba(0,0,0,0.05); color: #1A1A1A; }
 .black-badge { background: #1A1A1A; color: #FFF; }
 .user-desc { font-family: 'Noto Serif', serif; font-style: italic; font-size: 32rpx; color: rgba(0,0,0,0.6); line-height: 1.6; text-align: center; padding: 0 40rpx; }
+.edit-profile-btn { margin-top: 32rpx; padding: 0 40rpx; height: 84rpx; line-height: 84rpx; border-radius: 999rpx; background: rgba(255,255,255,0.9); color: #1A1A1A; font-size: 24rpx; font-weight: 600; border: 2rpx solid rgba(0,0,0,0.08); box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.04); }
 
 /* Stats Glass */
 .stats-glass { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border: 2rpx solid rgba(255,255,255,0.4); border-radius: 40rpx; padding: 40rpx; margin-bottom: 40rpx; box-shadow: 0 8rpx 48rpx rgba(0,0,0,0.02); }
@@ -67,6 +68,7 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 .sec-meta { font-size: 20rpx; font-weight: bold; color: rgba(0,0,0,0.4); letter-spacing: 4rpx; }
 .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 24rpx; }
 .grid-img { width: 100%; height: 200rpx; border-radius: 32rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05); object-fit: cover;}
+.photo-placeholder { background: rgba(255,255,255,0.5); border: 2rpx solid rgba(0,0,0,0.06); }
 .add-photo-btn { width: 100%; height: 200rpx; border-radius: 32rpx; border: 4rpx dashed rgba(0,0,0,0.2); background: rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center;}
 .add-photo-btn text { font-size: 60rpx; color: rgba(0,0,0,0.3); }
 
@@ -79,22 +81,3 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 .his-text { font-size: 24rpx; font-weight: bold; letter-spacing: 2rpx; color: rgba(0,0,0,0.8); }
 .his-arrow { font-size: 32rpx; color: rgba(0,0,0,0.3); }
 
-/* Bottom Nav Shared */
-.bottom-nav { position: fixed; bottom: 30rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
-.nav-container { pointer-events: auto; position: relative; width: 58%; min-width: 520rpx; overflow: hidden; border-radius: 100rpx; box-shadow: 0 14rpx 28rpx rgba(196, 184, 156, 0.08); }
-.nav-glass { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,247,243,0.92) 100%); border: 1px solid rgba(255,255,255,0.94); border-radius: 100rpx; box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9); }
-.nav-content { position: relative; z-index: 1; padding: 22rpx 42rpx 18rpx; display: flex; justify-content: space-between; align-items: center; }
-.nav-item { display: flex; flex-direction: column; align-items: center; opacity: 1; min-width: 104rpx; }
-.nav-item.active { opacity: 1; }
-.nav-icon { position: relative; width: 42rpx; height: 42rpx; margin-bottom: 12rpx; box-sizing: border-box; }
-.stories-icon { border: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; }
-.nav-item.active .stories-icon { border-color: #1A1A1A; }
-.cards-icon { width: 40rpx; height: 34rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 6rpx; }
-.cards-tab { position: absolute; top: -10rpx; left: 8rpx; width: 18rpx; height: 10rpx; border: 4rpx solid rgba(24,24,24,0.6); border-bottom: none; border-radius: 6rpx 6rpx 0 0; background: rgba(255,255,255,0.9); }
-.nav-item.active .cards-icon, .nav-item.active .cards-tab { border-color: #1A1A1A; }
-.profile-icon { width: 42rpx; height: 42rpx; }
-.profile-icon-head { position: absolute; top: 2rpx; left: 11rpx; width: 14rpx; height: 14rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; }
-.profile-icon-body { position: absolute; bottom: 1rpx; left: 7rpx; width: 22rpx; height: 14rpx; border: 4rpx solid rgba(24,24,24,0.6); border-top: none; border-radius: 0 0 16rpx 16rpx; }
-.nav-item.active .profile-icon-head, .nav-item.active .profile-icon-body { border-color: #1A1A1A; }
-.nav-text { font-size: 12rpx; font-weight: bold; letter-spacing: 2.2rpx; color: rgba(24,24,24,0.72); }
-.nav-item.active .nav-text { color: #1A1A1A; }

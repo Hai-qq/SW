@@ -16,7 +16,22 @@ Page({
     startX: 0
   },
 
-  onLoad() {
+  async onLoad() {
+    const app = getApp();
+    if (typeof app.ensureBootstrap === 'function') {
+      await app.ensureBootstrap();
+    }
+
+    if (app.globalData.authRequired || !app.globalData.currentUser) {
+      wx.redirectTo({ url: '/pages/auth/auth' });
+      return;
+    }
+
+    if (app.globalData.nextStep === 'home') {
+      wx.redirectTo({ url: '/pages/home/home' });
+      return;
+    }
+
     this.setData({
       currentQuestion: this.data.questions[0]
     });
@@ -118,6 +133,11 @@ Page({
           answers: this.data.answers
         }
       });
+      const app = getApp();
+      app.globalData.nextStep = 'home';
+      if (app.globalData.currentUser) {
+        app.globalData.currentUser.onboardingCompleted = true;
+      }
       wx.redirectTo({ url: '/pages/home/home' });
     } catch (error) {
       wx.showToast({

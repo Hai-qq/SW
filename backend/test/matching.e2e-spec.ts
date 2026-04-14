@@ -68,4 +68,43 @@ describe('Matching (e2e)', () => {
 
     expect(second.body.data).toMatchObject({ shouldTrigger: false });
   });
+
+  it('creates a connected relationship from a match result', async () => {
+    const trigger = await request(app.getHttpServer())
+      .post('/api/v1/matching/trigger-check')
+      .set('x-test-user-id', '1')
+      .send({ sessionId: 'session-match-3', sessionSwipeCount: 3, sessionDuration: 45 })
+      .expect(201);
+
+    const created = await request(app.getHttpServer())
+      .post('/api/v1/matching/connections')
+      .set('x-test-user-id', '1')
+      .send({
+        candidateUserId: trigger.body.data.matchUser.userId,
+        action: 'connect',
+      })
+      .expect(200);
+
+    expect(created.body.data).toMatchObject({
+      connectionId: expect.any(String),
+      status: 'connected',
+    });
+  });
+
+  it('lists the current user connections', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/v1/matching/connections')
+      .set('x-test-user-id', '1')
+      .expect(200);
+
+    expect(Array.isArray(response.body.data.items)).toBe(true);
+    expect(response.body.data.items[0]).toMatchObject({
+      connectionId: expect.any(String),
+      targetUser: {
+        userId: expect.any(String),
+        nickname: expect.any(String),
+      },
+      status: expect.any(String),
+    });
+  });
 });

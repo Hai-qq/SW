@@ -1,0 +1,12 @@
+<view class="auth-page" style="min-height: {{windowHeight}}px; padding-top: {{statusBarHeight}}px;">
+  <view class="auth-card">
+    <text class="auth-brand">Same Wavelength</text>
+    <text class="auth-title">微信一键授权登录</text>
+    <text class="auth-desc">登录后即可开始冲浪、真心话和小纸条。</text>
+    <text class="auth-tip">点击后会继续拉起微信官方授权弹窗，用于获取你的微信头像和昵称。</text>
+    <button class="auth-btn {{loading ? 'auth-btn--loading' : ''}}" bindtap="handleWechatAuthorize" disabled="{{loading}}">
+      {{loading ? '登录中，请稍候...' : '一键授权登录'}}
+    </button>
+    <text class="auth-hint">{{hint}}</text>
+  </view>
+</view>

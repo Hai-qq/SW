@@ -1,0 +1,103 @@
+page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f6f2eb 0%, #ece6da 100%);
+  color: #1a1a1a;
+}
+
+.connections-page {
+  padding: 48rpx 32rpx 64rpx;
+}
+
+.connections-header {
+  margin-bottom: 32rpx;
+}
+
+.connections-title {
+  display: block;
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+}
+
+.connections-subtitle {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: rgba(26, 26, 26, 0.56);
+}
+
+.connections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.connection-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 28rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.82);
+  border: 2rpx solid rgba(26, 26, 26, 0.06);
+  box-shadow: 0 14rpx 36rpx rgba(0, 0, 0, 0.04);
+}
+
+.connection-avatar {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.connection-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.connection-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.connection-name {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.connection-status {
+  font-size: 20rpx;
+  color: rgba(26, 26, 26, 0.48);
+}
+
+.connection-subtitle {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: rgba(26, 26, 26, 0.66);
+}
+
+.connections-empty {
+  margin-top: 100rpx;
+  padding: 56rpx 32rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.78);
+  text-align: center;
+  border: 2rpx solid rgba(26, 26, 26, 0.06);
+}
+
+.connections-empty-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.connections-empty-subtitle {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: rgba(26, 26, 26, 0.56);
+}

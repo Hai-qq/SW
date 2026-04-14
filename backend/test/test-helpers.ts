@@ -4,5 +4,9 @@ export function resetDatabase() {
   execSync('npm run prisma:seed', {
     cwd: process.cwd(),
     stdio: 'ignore',
+    env: {
+      ...process.env,
+      ALLOW_TEST_AUTH: 'true',
+    },
   });
 }
