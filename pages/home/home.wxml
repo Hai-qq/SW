@@ -5,46 +5,11 @@
 
   <!-- 顶部导航区 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
-    <view class="header-content" style="margin-top: {{headerContentMT}}px; height: {{menuTriggerH}}px;">
-      <view class="registered-users" bindtap="goToProfile">
+    <view class="header-content">
+      <view class="registered-users">
         <view class="online-dot"></view>
         <text>32,419 位同频者已加入</text>
       </view>
-    </view>
-  </view>
-
-  <!-- 功能菜单按钮: fixed 定位，紧贴胶囊左侧 -->
-  <view
-    class="menu-trigger"
-    style="right: {{menuTriggerRight}}px; top: {{menuTriggerTop}}px; height: {{menuTriggerH}}px;"
-    bindtap="toggleMenuPanel">
-    <view class="menu-dot-row">
-      <view class="menu-dot"></view>
-      <view class="menu-dot"></view>
-      <view class="menu-dot"></view>
-    </view>
-  </view>
-
-  <!-- 菜单面板遮罩 -->
-  <view class="menu-mask" wx:if="{{showMenuPanel}}" catchtap="closeMenuPanel"></view>
-
-  <!-- 菜单面板 -->
-  <view class="menu-panel" wx:if="{{showMenuPanel}}" style="top: calc({{statusBarHeight}}px + 88rpx);">
-    <text class="menu-panel-label">话题筛选</text>
-    <view class="menu-categories">
-      <view
-        class="menu-cat-chip {{currentTab === item ? 'active' : ''}}"
-        wx:for="{{tabs}}"
-        wx:key="index"
-        data-tab="{{item}}"
-        bindtap="selectCategory">
-        <text class="menu-cat-text">{{item}}</text>
-      </view>
-    </view>
-    <view class="menu-divider"></view>
-    <view class="menu-profile-row" bindtap="goToProfile">
-      <text class="menu-profile-text">我的档案</text>
-      <text class="menu-profile-arrow">→</text>
     </view>
   </view>
 
@@ -55,7 +20,7 @@
       <!-- 个人入口 -->
       <view class="story-item">
         <view class="avatar-wrap you-wrap">
-          <image class="avatar-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKIsQ_bqFzmWxDSDkiZxPO2wAgWkowGYIPO4QTcuJtrO_sZjy0vXIEH1v_IzEUuvE_MstRGn0ENMLnF5L2ZeoRnB0UdWrIdPqBSjYMPZxI9YbWyRNotG8jewPQeF_UXwfxGe52oL8DVzjv6kx3-eOQ7g8BR28FK-whVhDgDX6Yw9c9intyLOHfgDXnjdwJF8aOtUZ9TSTQg3E4UuDDbI4utTxXxxtUjdgDmFuZzO3eQznb6Wxt0K_uYOa2MWd63rKUaVmx58SBfww" mode="aspectFill"></image>
+          <view class="avatar-img avatar-placeholder"></view>
           <view class="badge black-badge"></view>
         </view>
         <text class="name-text">你</text>
@@ -63,7 +28,8 @@
       <!-- 推荐匹配者 -->
       <view class="story-item" wx:for="{{recommendUsers}}" wx:key="id">
         <view class="avatar-wrap">
-          <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"></image>
+          <image wx:if="{{item.hasAvatar}}" class="avatar-img" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view wx:if="{{!item.hasAvatar}}" class="avatar-img avatar-placeholder"></view>
           <view class="badge"></view>
         </view>
         <text class="name-text">{{item.name}}</text>
@@ -106,8 +72,8 @@
         <!-- 卡片底部: 同频数据条 -->
         <view class="card-footer">
           <view class="vote-labels">
-            <text class="label-left">认同</text>
-            <text class="label-right">不认同</text>
+            <text class="label-left">A</text>
+            <text class="label-right">B</text>
           </view>
           
           <view class="progress-bar-container">
@@ -115,10 +81,12 @@
               <view class="progress-bar-fill" style="width: {{currentCard.agreePercent}}%;"></view>
             </view>
             <view class="avatars-agree" style="left: 0;">
-              <image wx:for="{{currentCard.agreeAvatars}}" wx:key="index" src="{{item}}" class="tiny-avatar"></image>
+              <block wx:if="{{currentCard.hasAgreeAvatars}}">
+                <image wx:for="{{currentCard.agreeAvatars}}" wx:key="index" src="{{item}}" class="tiny-avatar"></image>
+              </block>
             </view>
             <view class="avatars-disagree" style="right: 0;">
-              <image src="{{currentCard.disagreeAvatar}}" class="tiny-avatar single"></image>
+              <image wx:if="{{currentCard.hasDisagreeAvatar}}" src="{{currentCard.disagreeAvatar}}" class="tiny-avatar single"></image>
             </view>
           </view>
 
@@ -126,8 +94,8 @@
             <view class="card-action-pill" bindtap="openCommentPanel">
               <view class="card-action-icon-wrap">
                 <image src="/assets/icons/forum.svg" class="card-action-icon" mode="aspectFit"></image>
-              </view>
-              <text class="card-action-text">评论</text>
+            </view>
+              <text class="card-action-text">评论 {{currentCard.commentCount}}</text>
             </view>
 
             <view class="card-action-pill" bindtap="reduceSimilarTopics">
@@ -210,5 +178,53 @@
       <button class="modal-btn-primary" bindtap="closeModal">确认</button>
     </view>
   </view>
+
+  <view class="comment-mask" wx:if="{{showCommentPanel}}" catchtouchmove="preventTouchMove">
+    <view class="comment-panel">
+      <view class="comment-panel-header">
+        <text class="comment-panel-title">卡片评论</text>
+        <text class="comment-panel-close" bindtap="closeCommentPanel">关闭</text>
+      </view>
+      <text class="comment-card-text">"{{currentCard.content}}"</text>
+      <view wx:if="{{commentsEmpty}}" class="comment-empty">还没有评论，写下第一句共鸣。</view>
+      <scroll-view scroll-y="true" class="comment-list">
+        <view wx:for="{{comments}}" wx:key="commentId" class="comment-row">
+          <text class="comment-author">{{item.author.nickname}}</text>
+          <text class="comment-content">{{item.content}}</text>
+        </view>
+      </scroll-view>
+      <textarea
+        class="comment-input"
+        value="{{commentInput}}"
+        bindinput="onCommentInput"
+        maxlength="300"
+        placeholder="写一句你的看法"
+      ></textarea>
+      <button class="comment-submit" bindtap="submitComment">发送评论</button>
+    </view>
+  </view>
+
+  <view class="share-mask" wx:if="{{showSharePanel}}" catchtouchmove="preventTouchMove" catchtap="closeSharePanel">
+    <view class="share-panel" catchtap="noop">
+      <text class="share-title">分享观点卡片</text>
+      <text class="share-desc">生成话题海报后，可直接分享给微信好友或朋友圈。</text>
+
+      <view class="share-preview">
+        <text class="share-preview-tag">{{(currentCard.tags && currentCard.tags[0]) || '全部'}}</text>
+        <text class="share-preview-text">"{{currentCard.content}}"</text>
+      </view>
+
+      <view class="share-actions">
+        <button class="share-btn ghost" bindtap="generateSharePoster" loading="{{sharePosterGenerating}}">生成海报</button>
+        <button class="share-btn solid" bindtap="shareToWechatFriend">微信好友</button>
+        <button class="share-btn solid" bindtap="shareToTimeline">朋友圈</button>
+        <button class="share-btn ghost" bindtap="savePosterToAlbum">保存到相册</button>
+      </view>
+
+      <button class="share-close" bindtap="closeSharePanel">取消</button>
+    </view>
+  </view>
+
+  <canvas canvas-id="sharePosterCanvas" class="poster-canvas"></canvas>
 
 </view>

@@ -1,43 +1,86 @@
 <view class="container" style="padding-top: {{statusBarHeight}}px;">
   <view class="header">
-    <text class="page-title">小纸条</text>
+    <text wx:if="{{isDetailMode}}" class="back-link" bindtap="backToList">‹ 返回</text>
+    <text class="page-title">{{pageTitle}}</text>
   </view>
 
-  <scroll-view scroll-y="true" enable-flex class="chat-list">
-    <view class="chat-item" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
-      <view class="avatar-ph"></view>
-      <view class="chat-info">
-        <view class="chat-name-row">
-          <text class="chat-name">同频用户 {{item}}</text>
-          <text class="chat-time">14:0{{item}}</text>
-        </view>
-        <view class="chat-preview">看到你的想法很有共鸣，希望能认识一下...</view>
-      </view>
+  <scroll-view wx:if="{{isListMode}}" scroll-y="true" enable-flex class="chat-list">
+    <view wx:if="{{showConversationLoading}}" class="chat-empty">
+      <text>正在收取小纸条...</text>
     </view>
+    <view wx:if="{{showConversationEmpty}}" class="chat-empty">
+      <text class="chat-empty-title">还没有小纸条</text>
+      <text class="chat-empty-sub">先建立连接，再打开一段对话。</text>
+    </view>
+    <block wx:if="{{showConnectionEntrypoints}}">
+      <view class="connection-hint">
+        <text class="connection-hint-title">从我的连接开始</text>
+        <text class="connection-hint-sub">这些人已经和你连接，可以直接写第一张小纸条。</text>
+      </view>
+      <view class="chat-item connection-item" wx:for="{{connections}}" wx:key="connectionId" data-id="{{item.connectionId}}" bindtap="openConnection">
+        <image wx:if="{{item.hasAvatar}}" class="avatar-ph" src="{{item.peer.avatar}}"></image>
+        <view wx:if="{{!item.hasAvatar}}" class="avatar-ph"></view>
+        <view class="chat-info">
+          <view class="chat-name-row">
+            <text class="chat-name">{{item.peer.nickname}}</text>
+            <text class="connect-pill">开聊</text>
+          </view>
+          <view class="chat-preview">{{item.matchReason}}</view>
+        </view>
+      </view>
+    </block>
+    <block wx:if="{{showConversationList}}">
+      <view class="chat-item" wx:for="{{conversations}}" wx:key="conversationId" data-id="{{item.conversationId}}" bindtap="openConversation">
+        <image wx:if="{{item.hasAvatar}}" class="avatar-ph" src="{{item.peer.avatar}}"></image>
+        <view wx:if="{{!item.hasAvatar}}" class="avatar-ph"></view>
+        <view class="chat-info">
+          <view class="chat-name-row">
+            <text class="chat-name">{{item.peer.nickname}}</text>
+            <view class="chat-meta">
+              <text wx:if="{{item.hasUnread}}" class="unread-badge">{{item.unreadText}}</text>
+              <text class="chat-time">{{item.timeText}}</text>
+            </view>
+          </view>
+          <view class="chat-preview">{{item.previewText}}</view>
+        </view>
+      </view>
+    </block>
   </scroll-view>
 
+  <view wx:if="{{isDetailMode}}" class="message-panel">
+    <scroll-view scroll-y="true" class="message-list" scroll-into-view="{{messageScrollIntoView}}">
+      <view wx:if="{{showMessageEmpty}}" class="chat-empty">
+        <text class="chat-empty-title">还没有消息</text>
+        <text class="chat-empty-sub">发出第一张小纸条吧。</text>
+      </view>
+      <button wx:if="{{hasOlderMessages}}" class="load-older-btn" bindtap="loadOlderMessages">加载更早的小纸条</button>
+      <view wx:for="{{messages}}" wx:key="messageId" id="message-{{item.messageId}}" class="{{item.rowClass}}">
+        <view class="message-bubble">
+          <text>{{item.content}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="message-composer">
+      <input class="message-input" value="{{messageInput}}" placeholder="写一张小纸条..." bindinput="onMessageInput" />
+      <button class="send-btn" bindtap="sendMessage">发送</button>
+    </view>
+  </view>
+
   <!-- 底部毛玻璃导航条 -->
-  <view class="bottom-nav">
+  <view wx:if="{{isListMode}}" class="bottom-nav">
     <view class="nav-container">
       <view class="nav-glass"></view>
       <view class="nav-content">
         <view class="nav-item" bindtap="goToDiscovery">
-          <view class="nav-icon surf-icon">
-            <view class="wave"></view>
-          </view>
+          <image src="/assets/icons/wave.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">冲浪</text>
         </view>
         <view class="nav-item" bindtap="goToHome">
-          <view class="nav-icon cards-icon">
-            <view class="cards-tab"></view>
-          </view>
+          <image src="/assets/icons/cards_stack.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">真心话</text>
         </view>
         <view class="nav-item active">
-          <view class="nav-icon chat-icon">
-            <view class="bubble"></view>
-            <view class="tail"></view>
-          </view>
+          <image src="/assets/icons/note.svg" class="nav-svg-icon active-icon" mode="aspectFit"></image>
           <text class="nav-text">小纸条</text>
         </view>
       </view>

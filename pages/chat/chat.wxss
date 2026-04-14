@@ -3,6 +3,7 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 
 .header { padding: 20rpx 40rpx 40rpx; display: flex; justify-content: space-between; align-items: flex-end; }
 .page-title { font-family: 'Noto Serif', serif; font-size: 56rpx; font-weight: bold; font-style: italic; }
+.back-link { font-size: 28rpx; color: rgba(26,26,26,0.56); margin-right: 24rpx; }
 
 .chat-list { flex: 1; padding: 0 40rpx 200rpx; box-sizing: border-box; width: 100%; }
 .chat-item { display: flex; align-items: center; background: rgba(255,255,255,0.92); border-radius: 40rpx; padding: 32rpx 36rpx; margin-bottom: 24rpx; box-shadow: 0 16rpx 40rpx rgba(196,184,156,0.15); border: 2rpx solid rgba(255,255,255,0.8); }
@@ -10,8 +11,29 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 .chat-info { flex: 1; overflow: hidden; }
 .chat-name-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
 .chat-name { font-family: 'Noto Serif', serif; font-weight: bold; font-size: 30rpx; color: #1A1A1A; }
+.chat-meta { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
+.unread-badge { min-width: 32rpx; height: 32rpx; line-height: 32rpx; padding: 0 8rpx; border-radius: 999rpx; background: #1A1A1A; color: #FFF; text-align: center; font-size: 18rpx; font-weight: 700; }
 .chat-time { font-size: 18rpx; color: rgba(26,26,26,0.3); font-weight: bold; letter-spacing: 2rpx; }
 .chat-preview { font-size: 24rpx; color: rgba(26,26,26,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+.chat-empty { margin: 80rpx 0; padding: 56rpx 32rpx; border-radius: 40rpx; background: rgba(255,255,255,0.72); text-align: center; color: rgba(26,26,26,0.58); }
+.chat-empty-title { display: block; font-size: 32rpx; font-weight: 700; color: rgba(26,26,26,0.82); }
+.chat-empty-sub { display: block; margin-top: 14rpx; font-size: 24rpx; }
+.connection-hint { margin: 28rpx 0 24rpx; padding: 0 8rpx; }
+.connection-hint-title { display: block; font-family: 'Noto Serif', serif; font-size: 34rpx; font-weight: bold; font-style: italic; color: rgba(26,26,26,0.86); }
+.connection-hint-sub { display: block; margin-top: 8rpx; font-size: 22rpx; line-height: 1.5; color: rgba(26,26,26,0.46); }
+.connection-item { border-color: rgba(26,26,26,0.08); }
+.connect-pill { padding: 8rpx 18rpx; border-radius: 999rpx; background: #1A1A1A; color: #FFF; font-size: 20rpx; font-weight: 700; }
+
+.message-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.message-list { flex: 1; padding: 0 40rpx 180rpx; box-sizing: border-box; }
+.message-row { display: flex; margin-bottom: 24rpx; justify-content: flex-start; }
+.load-older-btn { margin: 0 auto 28rpx; padding: 0 28rpx; height: 60rpx; line-height: 60rpx; border-radius: 999rpx; background: rgba(255,255,255,0.72); color: rgba(26,26,26,0.5); font-size: 22rpx; }
+.message-row.mine { justify-content: flex-end; }
+.message-bubble { max-width: 70%; padding: 24rpx 28rpx; border-radius: 32rpx 32rpx 32rpx 8rpx; background: rgba(255,255,255,0.92); font-size: 28rpx; line-height: 1.55; color: #1A1A1A; box-shadow: 0 12rpx 28rpx rgba(196,184,156,0.12); }
+.message-row.mine .message-bubble { border-radius: 32rpx 32rpx 8rpx 32rpx; background: #1A1A1A; color: #FFF; }
+.message-composer { position: fixed; left: 40rpx; right: 40rpx; bottom: 48rpx; display: flex; gap: 20rpx; align-items: center; padding: 18rpx; border-radius: 40rpx; background: rgba(255,255,255,0.94); box-shadow: 0 18rpx 48rpx rgba(0,0,0,0.08); }
+.message-input { flex: 1; height: 76rpx; padding: 0 28rpx; border-radius: 999rpx; background: rgba(245,243,237,0.92); font-size: 26rpx; }
+.send-btn { width: 132rpx; height: 76rpx; line-height: 76rpx; margin: 0; padding: 0; border-radius: 999rpx; background: #1A1A1A; color: #FFF; font-size: 24rpx; font-weight: 700; }
 
 /* Bottom Nav Shared */
 .bottom-nav { position: fixed; bottom: 52rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
@@ -19,26 +41,8 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: linea
 .nav-glass { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,247,243,0.92) 100%); border: 1px solid rgba(255,255,255,0.94); border-radius: 100rpx; box-shadow: inset 0 1rpx 0 rgba(255,255,255,0.9); }
 .nav-content { position: relative; z-index: 1; padding: 22rpx 42rpx 18rpx; display: flex; justify-content: space-between; align-items: center; }
 .nav-item { display: flex; flex-direction: column; align-items: center; opacity: 1; min-width: 104rpx; }
-
-/* Icon Wrappers */
-.nav-icon { position: relative; width: 42rpx; height: 42rpx; margin-bottom: 12rpx; box-sizing: border-box; display: flex; justify-content: center; align-items: center;}
-
-/* Cards Icon */
-.cards-icon { width: 40rpx; height: 34rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 6rpx; }
-.cards-tab { position: absolute; top: -10rpx; left: 8rpx; width: 18rpx; height: 10rpx; border: 4rpx solid rgba(24,24,24,0.6); border-bottom: none; border-radius: 6rpx 6rpx 0 0; background: rgba(255,255,255,0.9); }
-.nav-item.active .cards-icon, .nav-item.active .cards-tab { border-color: #1A1A1A; }
-
-/* Chat Icon */
-.bubble { width: 36rpx; height: 28rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 12rpx; position: relative;}
-.tail { position: absolute; bottom: 0; right: 6rpx; width: 0; height: 0; border-left: 8rpx solid transparent; border-right: 0px solid transparent; border-bottom: 8rpx solid rgba(24,24,24,0.6); transform: translateY(6rpx) translateX(4rpx) rotate(-15deg); }
-.nav-item.active .bubble { border-color: #1A1A1A; }
-.nav-item.active .tail { border-bottom-color: #1A1A1A; }
-
-/* Surf Icon */
-.surf-icon { overflow: hidden; width: 36rpx; height: 36rpx; border: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; display: flex; justify-content: center; align-items: center;}
-.wave { width: 40rpx; height: 20rpx; border-top: 4rpx solid rgba(24,24,24,0.6); border-radius: 50%; transform: translateY(4rpx); }
-.nav-item.active .surf-icon { border-color: #1A1A1A; }
-.nav-item.active .wave { border-top-color: #1A1A1A; }
-
-.nav-text { font-size: 12rpx; font-weight: bold; letter-spacing: 2.2rpx; color: rgba(24,24,24,0.72); }
+.nav-svg-icon { width: 44rpx; height: 44rpx; margin-bottom: 10rpx; opacity: 0.5; }
+.nav-item.active .nav-svg-icon,
+.active-icon { opacity: 1; }
+.nav-text { font-size: 20rpx; font-weight: bold; letter-spacing: 1rpx; color: rgba(24,24,24,0.55); }
 .nav-item.active .nav-text { color: #1A1A1A; }

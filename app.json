@@ -1,9 +1,13 @@
 {
   "pages": [
+    "pages/auth/auth",
     "pages/onboarding/onboarding",
     "pages/home/home",
     "pages/discovery/discovery",
     "pages/profile/profile",
+    "pages/profile-edit/profile-edit",
+    "pages/settings/settings",
+    "pages/connections/connections",
     "pages/chat/chat"
   ],
   "window": {

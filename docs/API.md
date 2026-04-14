@@ -1,240 +1,162 @@
-# SW（Same Wavelength）前后端 API 对齐文档
+# SW API Reference
 
-> **版本：** V1.2（对齐实际实现，修正 Onboarding 题目数量为3题）
-> **状态：** API 骨架定义，前端 Mock 数据，待后端实现
+> Version: 2026-04-11
+> Status: aligned with the current NestJS backend implementation
 
----
+## 1. Global contract
 
-## 1. 全局规范
+- Base path: `/api/v1`
+- Auth: `Authorization: Bearer <token>`
+- Development fallback: when backend enables `ALLOW_TEST_AUTH=true`, local test-user auth can still be used for development and e2e flows
+- Unified response shape:
 
-- **请求域名**：`https://api.yourdomain.com`（占位，待定）
-- **通信协议**：HTTPS / RESTful
-- **鉴权方式**：`Authorization: Bearer <Token>`
-- **统一返回格式**：
-  ```json
-  {
-    "code": 200,
-    "message": "success",
-    "data": {}
-  }
-  ```
-
----
-
-## 2. Onboarding 接口（3 题引导）
-
-### 2.1 上报初始答卷
-
-| 项 | 值 |
-|----|----|
-| URL | `POST /api/v1/onboarding/submit` |
-| 说明 | 用户完成 3 题划卡后上报，建立基础画像标签 |
-
-**Request Body**
 ```json
 {
-  "answers": [
-    { "questionId": 1, "selected": "female" },
-    { "questionId": 2, "selected": "gen-z" },
-    { "questionId": 3, "selected": "single" }
-  ]
+  "code": 200,
+  "message": "success",
+  "data": {}
 }
 ```
 
-**前端调用位置**：`pages/onboarding/onboarding.js` → `animateSwipe()`（最后一题完成时）
+## 2. Current implemented modules
 
----
+Implemented backend modules:
 
-## 3. Home（首页卡片）接口
+- `auth`
+- `users`
+- `onboarding`
+- `cards`
+- `matching`
+- `discovery`
+- `profile`
+- `chat`
 
-### 3.1 获取推荐观点卡片
+## 3. Implemented endpoints
 
-| 项 | 值 |
-|----|----|
-| URL | `GET /api/v1/cards/recommend` |
-| Params | `limit=5&cursor=<上次游标>` |
+### 3.1 Auth
 
-**Response `data`**
-```json
-{
-  "cursor": "next_cursor_token",
-  "items": [
-    {
-      "cardId": 1001,
-      "content": "坚定地认为《虎胆龙威》是一部圣诞电影。",
-      "tags": "态度 · 幽默",
-      "user": {
-        "userId": 201,
-        "name": "SOFIA",
-        "avatar": "https://..."
-      },
-      "stats": {
-        "agreePercent": 65,
-        "agreeAvatars": ["https://...", "https://..."],
-        "disagreeAvatar": "https://..."
-      }
-    }
-  ]
-}
-```
+- `POST /api/v1/auth/wechat-login`
+  - body: `{ "code": "wx-login-code" }`
+  - purpose: create or reuse a user identity and return login state
+- `GET /api/v1/auth/me`
+  - purpose: resolve the current user from bearer token
 
-**前端调用位置**：`pages/home/home.js` → `loadNextCard()`
+### 3.2 Users
 
----
+- `GET /api/v1/users/bootstrap`
+  - purpose: determine startup routing for the current user, including whether onboarding is complete
 
-### 3.2 上报划动行为
+### 3.3 Onboarding
 
-| 项 | 值 |
-|----|----|
-| URL | `POST /api/v1/cards/swipe` |
+- `POST /api/v1/onboarding/submit`
+  - purpose: submit the 3-question onboarding answer set for the current user
 
-**Request Body**
-```json
-{
-  "cardId": 1001,
-  "action": "agree",
-  "timestamp": 1743600000000
-}
-```
+### 3.4 Home / Cards
 
-`action` 枚举值：`agree`（右滑认同）/ `disagree`（左滑不认同）/ `skip`（上滑跳过）
+- `GET /api/v1/cards/recommend`
+  - purpose: fetch home recommendation cards
+- `GET /api/v1/cards/recommend-users`
+  - purpose: fetch the home top rail of similar-frequency users
+- `POST /api/v1/cards/swipe`
+  - body fields include:
+    - `cardId`
+    - `action = agree | disagree | skip`
+    - `sessionId`
+    - optional `sourceTab`
+- `POST /api/v1/cards/feedback`
+  - body fields include:
+    - `cardId`
+    - `feedbackType = reduce_similar`
+    - optional `category`
+- `GET /api/v1/cards/:cardId/comments`
+  - purpose: list comments for a home card
+- `POST /api/v1/cards/:cardId/comments`
+  - purpose: create a comment for a home card
 
-**前端调用位置**：`pages/home/home.js` → `recordSwipe(direction)`
+### 3.5 Matching / Connections
 
----
+- `POST /api/v1/matching/trigger-check`
+  - purpose: evaluate whether the current session should surface a match candidate
+- `POST /api/v1/matching/connections`
+  - body fields include:
+    - `candidateUserId`
+    - `action = connect | hide`
+    - optional `matchEventId`
+- `GET /api/v1/matching/connections`
+  - query:
+    - optional `status = pending | connected | hidden`
 
-### 3.3 盲盒触发检查
+### 3.6 Discovery
 
-| 项 | 值 |
-|----|----|
-| URL | `POST /api/v1/blind-box/trigger-check` |
-| 触发条件 | 本次会话累计 ≥ 3 次有效划动 且 在线时长 > 30 秒 |
+- `GET /api/v1/discovery/feed`
+  - purpose: load the public discovery feed
+- `GET /api/v1/discovery/my-posts`
+  - purpose: load the current user's own posts
+- `POST /api/v1/discovery/publish`
+  - body fields include:
+    - `content`
+    - `tabType`
+    - optional `anonymous`
+    - optional `action = draft | publish`
+- `POST /api/v1/discovery/posts/:postId/like`
+  - purpose: like a discovery post once per user
+- `GET /api/v1/discovery/posts/:postId/comments`
+  - purpose: list comments for a discovery post
+- `POST /api/v1/discovery/posts/:postId/comments`
+  - purpose: create a comment for a discovery post
 
-**Request Body**
-```json
-{
-  "sessionSwipeCount": 3,
-  "sessionDuration": 45
-}
-```
+### 3.7 Profile
 
-**Response `data`**
-```json
-{
-  "shouldTrigger": true,
-  "matchUser": {
-    "userId": 302,
-    "name": "MARCUS",
-    "avatar": "https://..."
-  }
-}
-```
+- `GET /api/v1/profile/info`
+  - purpose: fetch the current user's profile
+- `PATCH /api/v1/profile/info`
+  - purpose: update editable profile fields
+- `POST /api/v1/profile/photos`
+  - purpose: add a photo to the user's photo wall
+- `DELETE /api/v1/profile/photos/:photoId`
+  - purpose: delete one photo
+- `PATCH /api/v1/profile/photos/sort`
+  - purpose: reorder photo-wall items
 
-**前端调用位置**：`pages/home/home.js` → `checkBlindBoxTrigger()`
+### 3.8 Chat
 
----
+- `POST /api/v1/chat/conversations`
+  - body: `{ "connectionId": "9" }`
+  - purpose: create or reopen a one-to-one conversation from a `connected` relationship
+- `GET /api/v1/chat/conversations`
+  - purpose: list the current user's conversations
+- `GET /api/v1/chat/conversations/:conversationId/messages`
+  - query:
+    - optional `limit` with default `30`, range `1-50`
+    - optional `before` cursor
+  - purpose: list conversation messages with backward pagination
+- `POST /api/v1/chat/conversations/:conversationId/messages`
+  - body: `{ "content": "你好，很高兴认识你" }`
+  - purpose: send one text message
+- `POST /api/v1/chat/conversations/:conversationId/read`
+  - purpose: mark a conversation as read and clear unread count
 
-## 4. Discovery（真心话）接口
+## 4. Product status summary
 
-### 4.1 获取内容 Feed
+As of 2026-04-11:
 
-| 项 | 值 |
-|----|----|
-| URL | `GET /api/v1/discovery/feed` |
-| Params | `tabType=all&feedType=featured&cursor=xxx` |
+- Home is on real backend data for recommendation, swipe, user rail, feedback, comments, matching, and connect-to-chat
+- Discovery is on real backend data for feed, publish, drafts, my-posts, likes, and comments
+- Chat is on real backend data for conversation list, open conversation, message list, send text, unread count, read marking, and message pagination
 
-`tabType` 枚举：`all` / `internal` / `travel` / `values` / `politics`
-`feedType` 枚举：`featured`（热门投票卡片）/ `timeline`（时间线）
+## 5. Not implemented yet
 
-**Response `data`**
-```json
-{
-  "cursor": "next_cursor",
-  "items": [
-    {
-      "feedId": 501,
-      "type": "featured",
-      "title": "如果时间可以倒流，你最想回到哪一年的夏天？",
-      "quote": "那年夏天没有口罩...",
-      "stats": { "optionA": 65, "optionB": 35 },
-      "optionALabel": "2008: 奥运与旧时光",
-      "optionBLabel": "2019: 最后的安稳",
-      "participants": 130,
-      "participantAvatars": ["https://...", "https://..."]
-    },
-    {
-      "feedId": 502,
-      "type": "timeline",
-      "createdAt": "12 MINS AGO",
-      "authorName": "匿名猫",
-      "content": "在大城市待久了..."
-    }
-  ]
-}
-```
+The main missing capabilities are no longer "whether backend exists", but the next-stage enhancements:
 
-**前端调用位置**：`pages/discovery/discovery.js` → `onLoad()` / Tab 切换时
+- chat realtime refresh via polling or WebSocket
+- blocking, reporting, disconnecting, and other safety controls
+- message revoke/delete and richer message types
+- discovery moderation, edit flows, search, and operations tooling
+- image upload pipeline and object storage
+- recommendation quality improvements and feedback-loop refinement
 
----
+## 6. Related source references
 
-### 4.2 发布新观点
-
-| 项 | 值 |
-|----|----|
-| URL | `POST /api/v1/discovery/publish` |
-
-**Request Body**
-```json
-{
-  "content": "观点文本",
-  "tabType": "values",
-  "anonymous": false
-}
-```
-
-**前端调用位置**：`pages/discovery/discovery.js` → `openPublish()`（待实现发布弹窗）
-
----
-
-## 5. Profile（我的档案）接口
-
-### 5.1 获取个人档案
-
-| 项 | 值 |
-|----|----|
-| URL | `GET /api/v1/profile/info` |
-
-**Response `data`**
-```json
-{
-  "userId": 8801,
-  "nickname": "林深处的麋鹿",
-  "gender": "female",
-  "age": 24,
-  "mbti": "INFJ-T",
-  "signature": "在喧嚣的世界寻找同频的声音...",
-  "counts": {
-    "visitors": 1200,
-    "followers": 458,
-    "following": 89,
-    "interactions": 2400
-  },
-  "photos": ["https://...", "https://..."]
-}
-```
-
-**前端调用位置**：`pages/profile/profile.js` → `onLoad()`
-
----
-
-## 6. 接口实现状态总览
-
-| 接口 | 前端对接点 | 状态 |
-|------|-----------|------|
-| `POST /api/v1/onboarding/submit` | `onboarding.js animateSwipe` | 未实现，Mock |
-| `GET /api/v1/cards/recommend` | `home.js loadNextCard` | 未实现，Mock |
-| `POST /api/v1/cards/swipe` | `home.js recordSwipe` | 未实现，Mock |
-| `POST /api/v1/blind-box/trigger-check` | `home.js checkBlindBoxTrigger` | 未实现，Mock |
-| `GET /api/v1/discovery/feed` | `discovery.js onLoad` | 未实现，Mock |
-| `POST /api/v1/discovery/publish` | `discovery.js openPublish` | 未实现，待开发 |
-| `GET /api/v1/profile/info` | `profile.js onLoad` | 未实现，Mock |
+- Backend overview: `backend/README.md`
+- Current project status: `docs/superpowers/specs/2026-04-11-page-backend-status-and-remaining-work.md`
+- Frontend/backend page alignment: `README.md`
