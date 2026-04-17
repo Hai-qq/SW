@@ -13,6 +13,15 @@
     </view>
   </view>
 
+  <!-- 心理学测试入口: fixed 定位，位于菜单按钮左侧 -->
+  <view
+    class="psych-test-trigger"
+    style="right: calc({{menuTriggerRight}}px + 96rpx); top: {{menuTriggerTop}}px; height: {{menuTriggerH}}px;"
+    bindtap="openPsychTest">
+    <text class="psych-test-icon">✦</text>
+    <text class="psych-test-label">测一测</text>
+  </view>
+
   <!-- 功能菜单按钮: fixed 定位，紧贴胶囊左侧 -->
   <view
     class="menu-trigger"
@@ -98,18 +107,26 @@
           </view>
         </view>
 
-        <!-- 卡片正文: 观点文字 -->
+        <!-- 卡片正文: 观点题干 -->
         <view class="card-body">
           <text class="opinion-text">"{{currentCard.content}}"</text>
         </view>
 
+        <!-- 卡片选项: 左认同 / 右不认同 -->
+        <view class="card-options">
+          <view class="card-option-left" bindtap="forceSwipeRight">
+            <text class="option-arrow-left">←</text>
+            <text class="option-label-text">认同</text>
+          </view>
+          <view class="card-option-divider"></view>
+          <view class="card-option-right" bindtap="forceSwipeLeft">
+            <text class="option-label-text">不认同</text>
+            <text class="option-arrow-right">→</text>
+          </view>
+        </view>
+
         <!-- 卡片底部: 同频数据条 -->
         <view class="card-footer">
-          <view class="vote-labels">
-            <text class="label-left">认同</text>
-            <text class="label-right">不认同</text>
-          </view>
-          
           <view class="progress-bar-container">
             <view class="progress-bar-bg">
               <view class="progress-bar-fill" style="width: {{currentCard.agreePercent}}%;"></view>
@@ -197,6 +214,41 @@
         <view class="nav-item" bindtap="goToChat">
           <image src="/assets/icons/note.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">小纸条</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 匹配对象仪式感弹窗：类似游戏限量皮肤出现 -->
+  <view class="match-reveal-mask" wx:if="{{showMatchCard}}" catchtouchmove="preventTouchMove" bindtap="closeMatchCard">
+    <view class="match-reveal-box" catchtap="preventTouchMove">
+      <view class="match-reveal-glow"></view>
+      <view class="match-reveal-badge">
+        <text class="match-reveal-badge-text">今日同频匹配</text>
+      </view>
+      <view class="match-reveal-avatar-wrap">
+        <image class="match-reveal-avatar" src="{{currentMatch.avatar}}" mode="aspectFill"></image>
+        <view class="match-reveal-ring"></view>
+      </view>
+      <text class="match-reveal-name">{{currentMatch.name}}</text>
+      <view class="match-reveal-score-row">
+        <text class="match-reveal-score-label">三观契合度</text>
+        <text class="match-reveal-score">{{currentMatch.matchScore}}%</text>
+      </view>
+      <view class="match-reveal-tags">
+        <view class="match-reveal-tag" wx:for="{{currentMatch.tags}}" wx:key="index">
+          <text class="match-reveal-tag-text">{{item}}</text>
+        </view>
+      </view>
+      <view class="match-reveal-hint">
+        <text class="match-reveal-hint-text">每日越晚遇见，越精准</text>
+      </view>
+      <view class="match-reveal-actions">
+        <view class="match-btn-secondary" bindtap="closeMatchCard">
+          <text class="match-btn-text-secondary">稍后再看</text>
+        </view>
+        <view class="match-btn-primary" bindtap="closeMatchCard">
+          <text class="match-btn-text-primary">打个招呼 →</text>
         </view>
       </view>
     </view>

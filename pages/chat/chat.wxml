@@ -1,19 +1,90 @@
+<!-- pages/chat/chat.wxml -->
 <view class="container" style="padding-top: {{statusBarHeight}}px;">
+  <view class="bg-gradient"></view>
+
+  <!-- 顶部标题 -->
   <view class="header">
     <text class="page-title">小纸条</text>
+    <view class="header-right">
+      <view class="new-compose-btn" bindtap="openNewChat">
+        <text class="compose-icon">✏</text>
+      </view>
+    </view>
   </view>
 
   <scroll-view scroll-y="true" enable-flex class="chat-list">
-    <view class="chat-item" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
-      <view class="avatar-ph"></view>
-      <view class="chat-info">
-        <view class="chat-name-row">
-          <text class="chat-name">同频用户 {{item}}</text>
-          <text class="chat-time">14:0{{item}}</text>
+
+    <!-- 3.3 新朋友 & 访客入口（固定在最顶部） -->
+    <view class="notify-row">
+      <view class="notify-card" bindtap="openNewFriends">
+        <view class="notify-icon-wrap notify-friend-bg">
+          <text class="notify-icon">👋</text>
         </view>
-        <view class="chat-preview">看到你的想法很有共鸣，希望能认识一下...</view>
+        <view class="notify-info">
+          <text class="notify-title">新朋友</text>
+          <text class="notify-desc">有 {{newFriendCount}} 人发来认识邀请</text>
+        </view>
+        <view class="notify-badge" wx:if="{{newFriendCount > 0}}">
+          <text class="notify-badge-text">{{newFriendCount}}</text>
+        </view>
+        <text class="notify-arrow">›</text>
+      </view>
+
+      <view class="notify-card" bindtap="openVisitors">
+        <view class="notify-icon-wrap notify-visitor-bg">
+          <text class="notify-icon">👁</text>
+        </view>
+        <view class="notify-info">
+          <text class="notify-title">访客</text>
+          <text class="notify-desc">{{visitorCount}} 人查看了你的档案</text>
+        </view>
+        <view class="notify-badge visitor-badge" wx:if="{{visitorCount > 0}}">
+          <text class="notify-badge-text">{{visitorCount}}</text>
+        </view>
+        <text class="notify-arrow">›</text>
       </view>
     </view>
+
+    <!-- 分隔线 -->
+    <view class="section-divider">
+      <text class="section-divider-text">消息</text>
+    </view>
+
+    <!-- 3.1 会话列表 -->
+    <view
+      class="chat-item"
+      wx:for="{{chatList}}"
+      wx:key="id"
+      bindtap="openChatDetail"
+      data-id="{{item.id}}">
+
+      <!-- 头像 -->
+      <view class="avatar-wrap">
+        <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"></image>
+        <view class="online-badge" wx:if="{{item.isOnline}}"></view>
+      </view>
+
+      <!-- 聊天信息 -->
+      <view class="chat-info">
+        <view class="chat-name-row">
+          <text class="chat-name">{{item.name}}</text>
+          <text class="chat-time">{{item.lastTime}}</text>
+        </view>
+        <text class="chat-preview">{{item.lastMsg}}</text>
+      </view>
+
+      <!-- 右侧三观档案入口 -->
+      <view class="chat-profile-btn" bindtap="openUserProfile" data-id="{{item.id}}" catchtap="openUserProfile" data-id="{{item.id}}">
+        <text class="chat-profile-icon">三</text>
+        <text class="chat-profile-label">档案</text>
+      </view>
+
+      <!-- 未读数 -->
+      <view class="unread-badge" wx:if="{{item.unreadCount > 0}}">
+        <text class="unread-text">{{item.unreadCount}}</text>
+      </view>
+    </view>
+
   </scroll-view>
 
   <!-- 底部毛玻璃导航条 -->
@@ -22,22 +93,15 @@
       <view class="nav-glass"></view>
       <view class="nav-content">
         <view class="nav-item" bindtap="goToDiscovery">
-          <view class="nav-icon surf-icon">
-            <view class="wave"></view>
-          </view>
+          <image src="/assets/icons/wave.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">冲浪</text>
         </view>
         <view class="nav-item" bindtap="goToHome">
-          <view class="nav-icon cards-icon">
-            <view class="cards-tab"></view>
-          </view>
+          <image src="/assets/icons/cards_stack.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">真心话</text>
         </view>
         <view class="nav-item active">
-          <view class="nav-icon chat-icon">
-            <view class="bubble"></view>
-            <view class="tail"></view>
-          </view>
+          <image src="/assets/icons/note.svg" class="nav-svg-icon active-icon" mode="aspectFit"></image>
           <text class="nav-text">小纸条</text>
         </view>
       </view>

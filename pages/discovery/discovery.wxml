@@ -1,95 +1,181 @@
 <!-- pages/discovery/discovery.wxml -->
-<view class="container" style="min-height: {{windowHeight}}px; background: linear-gradient(180deg, #F5F3ED 0%, #E2E8E4 100%);">
-  
+<view class="container" style="min-height: {{windowHeight}}px;">
+  <view class="bg-gradient"></view>
+
+  <!-- 顶部固定头部 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
     <view class="header-inner">
-      <view class="icon-btn"><text style="font-size: 40rpx; font-weight: 300;">☰</text></view>
-      <text class="logo-text">Same Wavelength</text>
+      <text class="logo-text">冲浪</text>
       <image class="avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxue1HnWTmY9jhMYkirM5bzPkGnNkeHG0Tk0XJF0yk5bF22dKPOBEwIrjYcOilieqt4WTL1683L0zErSr46zkUZNQOvn4m1tArSXRiUmG5ZPHtOwDpu8y8HABb22FcWnmeMrRBLXSjxA1Tcjv9EO8tN-IYr3DKO7BMTtAqmPdqXSxY_WXT8IZ2wXbLWi-UONpe5lanH5rggS57wrj7b9e2gEl7qOvUMzH6mlmCIwxFjXYFnvlth_I1kpC3xd_wpbKkH1COulhagGM"></image>
+    </view>
+    <!-- 三个子 Tab -->
+    <view class="sub-tabs">
+      <view
+        class="sub-tab-item {{currentSubTab === 'hot' ? 'active' : ''}}"
+        data-tab="hot"
+        bindtap="switchSubTab">
+        <text class="sub-tab-text">热议</text>
+        <view class="sub-tab-indicator" wx:if="{{currentSubTab === 'hot'}}"></view>
+      </view>
+      <view
+        class="sub-tab-item {{currentSubTab === 'cave' ? 'active' : ''}}"
+        data-tab="cave"
+        bindtap="switchSubTab">
+        <text class="sub-tab-text">树洞</text>
+        <view class="sub-tab-indicator" wx:if="{{currentSubTab === 'cave'}}"></view>
+      </view>
+      <view
+        class="sub-tab-item {{currentSubTab === 'square' ? 'active' : ''}}"
+        data-tab="square"
+        bindtap="switchSubTab">
+        <text class="sub-tab-text">广场</text>
+        <view class="sub-tab-indicator" wx:if="{{currentSubTab === 'square'}}"></view>
+      </view>
     </view>
   </view>
 
-  <scroll-view scroll-y="true" class="main-scroll" style="padding-top: calc({{statusBarHeight}}px + 108rpx);">
-    <view class="meta-date">
-      <text>TUESDAY, APRIL 15</text>
-      <text>AMSTERDAM</text>
-    </view>
+  <!-- 内容区 -->
+  <scroll-view scroll-y="true" class="main-scroll" style="padding-top: calc({{statusBarHeight}}px + 168rpx);">
 
-    <!-- Tabs -->
-    <scroll-view scroll-x="true" class="tabs" show-scrollbar="false">
-      <view class="tab-item active"><text>ALL</text></view>
-      <view class="tab-item"><text>INTERNAL</text></view>
-      <view class="tab-item"><text>TRAVEL</text></view>
-      <view class="tab-item"><text>VALUES</text></view>
-      <view class="tab-item"><text>POLITICS</text></view>
-    </scroll-view>
-
-    <!-- Featured Thoughts Section -->
-    <view class="section">
-      <view class="section-title">
-        <text class="title-text">Hot Waves (热门)</text>
-        <text style="font-size: 32rpx; color: #8c8c8c;">⋯</text>
+    <!-- ===== 热议 Tab ===== -->
+    <view wx:if="{{currentSubTab === 'hot'}}">
+      <view class="section-label">
+        <text class="section-label-text">综合热度排行</text>
+        <text class="section-label-sub">差异度 ×2 · 互动 ×2 · 转发 ×1</text>
       </view>
 
-      <view class="thought-card">
-        <view class="card-top">
-          <text class="card-title">如果时间可以倒流，你最想回到哪一年的夏天？</text>
-          <text style="font-size: 32rpx; color: #8C8C8C;">⋯</text>
-        </view>
-        <view class="stats">
-          <view class="progress-bar-bg">
-            <view class="progress-bar-fill" style="width: 65%;"></view>
+      <view wx:for="{{hotList}}" wx:key="id" class="hot-card {{item.rank <= 10 ? 'top10' : ''}}">
+        <!-- 排名 + 火苗标签 -->
+        <view class="hot-rank-row">
+          <view class="hot-rank-badge {{item.rank <= 3 ? 'rank-top3' : ''}}">
+            <text class="hot-rank-num">{{item.rank}}</text>
           </view>
-          <view class="stats-text">
-            <text class="black-text">2008: 奥运与旧时光 (65%)</text>
-            <text>2019: 最后的安稳 (35%)</text>
+          <view class="hot-fire-tag" wx:if="{{item.rank <= 10}}">
+            <text class="hot-fire-icon">🔥</text>
+            <text class="hot-fire-label">热议</text>
+          </view>
+          <view class="hot-gender-diff" wx:if="{{item.genderDiffHigh}}">
+            <text class="hot-gender-text">男女分歧</text>
           </view>
         </view>
-        <view class="avatars-group">
-          <view class="stack">
-            <image class="small-av" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxue1HnWTmY9jhMYkirM5bzPkGnNkeHG0Tk0XJF0yk5bF22dKPOBEwIrjYcOilieqt4WTL1683L0zErSr46zkUZNQOvn4m1tArSXRiUmG5ZPHtOwDpu8y8HABb22FcWnmeMrRBLXSjxA1Tcjv9EO8tN-IYr3DKO7BMTtAqmPdqXSxY_WXT8IZ2wXbLWi-UONpe5lanH5rggS57wrj7b9e2gEl7qOvUMzH6mlmCIwxFjXYFnvlth_I1kpC3xd_wpbKkH1COulhagGM"></image>
-            <image class="small-av" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHdQEsEnzrPY4Maldwuhf1R7g2NwrEdLpzvv9jbCMnNanOY3_j7zJ2kQN6CN4chMFRfiz4n8TXbPyhGIVdxhrAT6jupWsPjj1Tphv1Z9OCmHGlhPqlZ7PcMHvi_W_oD7sX26V2y5vs0OK-c-m-QNOCaqi2sClfxwZXRaTGpTzch5pigxE5RjrrT8XVcgbm__qYku4RZ7rDhgwRXSoASJUZDHivbxokbf9IXYQnOMwE82LmPetLTbFqH8iKqXgemV0IgAD6u3g-kIk"></image>
-            <view class="small-av more-av">+128</view>
+
+        <!-- 题目内容 -->
+        <text class="hot-content">"{{item.content}}"</text>
+
+        <!-- 数据条 -->
+        <view class="hot-stats-row">
+          <view class="hot-progress-wrap">
+            <view class="hot-progress-bg">
+              <view class="hot-progress-fill" style="width: {{item.agreePercent}}%;"></view>
+            </view>
+            <view class="hot-progress-labels">
+              <text class="hot-label-left">认同 {{item.agreePercent}}%</text>
+              <text class="hot-label-right">不认同 {{100 - item.agreePercent}}%</text>
+            </view>
           </view>
-          <text class="hint-msg">正在共鸣中...</text>
-        </view>
-        <view class="card-quote">
-          <text>"那年夏天没有口罩，只有吃不完的碎碎冰和永远做不完的暑假作业..."</text>
-        </view>
-      </view>
-
-    </view>
-
-    <!-- Timeline Section -->
-    <view class="section timeline-section">
-      <view class="section-title">
-        <text class="title-text">Surfing Feed</text>
-        <view class="filter-btn">
-          <text>最新冲浪</text>
-          <text style="font-size: 32rpx; opacity: 0.6; padding-left: 8rpx; margin-top: -6rpx;">⌄</text>
-        </view>
-      </view>
-
-      <view class="timeline">
-        <view class="timeline-line"></view>
-        
-        <view class="timeline-item">
-          <view class="timeline-dot black-dot"></view>
-          <text class="timeline-meta">12 MINS AGO · 匿名猫</text>
-          <text class="timeline-content">在大城市待久了，有时候真的分不清是在生活，还是只是在维持生存的体征。今天下班路上的晚霞好美，突然好想哭。</text>
         </view>
 
-        <view class="timeline-item">
-          <view class="timeline-dot gray-dot"></view>
-          <text class="timeline-meta">45 MINS AGO · 荒原狼</text>
-          <text class="timeline-content">辞职后的第30天。没有焦虑，只有一种如释重负的空虚感。我开始练习每天只做一个决定：中午吃什么。</text>
+        <!-- 互动数据 -->
+        <view class="hot-meta-row">
+          <text class="hot-meta-item">💬 {{item.commentCount}}</text>
+          <text class="hot-meta-item">↗ {{item.shareCount}}</text>
+          <text class="hot-meta-item">综合热度 {{item.hotScore}}</text>
         </view>
       </view>
     </view>
+
+    <!-- ===== 树洞 Tab ===== -->
+    <view wx:if="{{currentSubTab === 'cave'}}">
+      <view class="section-label">
+        <text class="section-label-text">树洞</text>
+        <text class="section-label-sub">默认匿名 · 真实表达 · 记入档案</text>
+      </view>
+
+      <view wx:for="{{caveList}}" wx:key="id" class="cave-card">
+        <!-- 匿名用户信息 -->
+        <view class="cave-user-row">
+          <view class="cave-avatar-wrap">
+            <text class="cave-avatar-emoji">{{item.virtualAvatar}}</text>
+          </view>
+          <view class="cave-user-info">
+            <text class="cave-nickname">{{item.nickname}}</text>
+            <text class="cave-time">{{item.timeAgo}}</text>
+          </view>
+          <view class="cave-anon-badge">
+            <text class="cave-anon-text">匿名</text>
+          </view>
+        </view>
+
+        <!-- 内容 -->
+        <text class="cave-content">{{item.content}}</text>
+
+        <!-- 互动区 -->
+        <view class="cave-actions">
+          <view class="cave-action-item" bindtap="likeCavePost" data-id="{{item.id}}">
+            <text class="cave-action-icon">♡</text>
+            <text class="cave-action-count">{{item.likeCount}}</text>
+          </view>
+          <view class="cave-action-item" bindtap="commentCavePost" data-id="{{item.id}}">
+            <text class="cave-action-icon">○</text>
+            <text class="cave-action-count">{{item.commentCount}} 回应</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 发布树洞入口 -->
+      <view class="cave-publish-btn" bindtap="publishCavePost">
+        <text class="cave-publish-text">+ 说点真心话</text>
+      </view>
+    </view>
+
+    <!-- ===== 广场 Tab ===== -->
+    <view wx:if="{{currentSubTab === 'square'}}">
+      <view class="section-label">
+        <text class="section-label-text">广场</text>
+        <text class="section-label-sub">真实生活 · 感官体验 · 遇见有趣的人</text>
+      </view>
+
+      <!-- 分类筛选 -->
+      <scroll-view scroll-x="true" class="square-filter-scroll" show-scrollbar="false">
+        <view
+          wx:for="{{squareFilters}}"
+          wx:key="index"
+          class="square-filter-chip {{currentSquareFilter === item ? 'active' : ''}}"
+          data-filter="{{item}}"
+          bindtap="switchSquareFilter">
+          <text class="square-filter-text">{{item}}</text>
+        </view>
+      </scroll-view>
+
+      <!-- 瀑布流内容 -->
+      <view class="square-grid">
+        <view wx:for="{{squareList}}" wx:key="id" class="square-item">
+          <view class="square-img-wrap">
+            <view class="square-img-placeholder" style="background: {{item.bgColor}};"></view>
+            <view class="square-category-tag">
+              <text class="square-category-text">{{item.category}}</text>
+            </view>
+          </view>
+          <view class="square-item-footer">
+            <view class="square-user-row">
+              <text class="square-user-avatar-emoji">{{item.virtualAvatar}}</text>
+              <text class="square-username">{{item.nickname}}</text>
+            </view>
+            <text class="square-caption">{{item.caption}}</text>
+            <view class="square-item-meta">
+              <text class="square-meta-like">♡ {{item.likeCount}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view style="height: 240rpx;"></view>
   </scroll-view>
 
+  <!-- 发布按钮 -->
   <view class="fab" bindtap="openPublish">
-    <text style="font-size: 48rpx; font-weight: 300;">＋</text>
+    <text class="fab-icon">＋</text>
   </view>
 
   <!-- 底部固定毛玻璃导航 -->
@@ -98,22 +184,15 @@
       <view class="nav-glass"></view>
       <view class="nav-content">
         <view class="nav-item active">
-          <view class="nav-icon surf-icon">
-            <view class="wave"></view>
-          </view>
+          <image src="/assets/icons/wave.svg" class="nav-svg-icon active-icon" mode="aspectFit"></image>
           <text class="nav-text">冲浪</text>
         </view>
         <view class="nav-item" bindtap="goToHome">
-          <view class="nav-icon cards-icon">
-            <view class="cards-tab"></view>
-          </view>
+          <image src="/assets/icons/cards_stack.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">真心话</text>
         </view>
         <view class="nav-item" bindtap="goToChat">
-          <view class="nav-icon chat-icon">
-            <view class="bubble"></view>
-            <view class="tail"></view>
-          </view>
+          <image src="/assets/icons/note.svg" class="nav-svg-icon" mode="aspectFit"></image>
           <text class="nav-text">小纸条</text>
         </view>
       </view>
