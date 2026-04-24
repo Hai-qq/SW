@@ -4,7 +4,8 @@
     "pages/home/home",
     "pages/discovery/discovery",
     "pages/profile/profile",
-    "pages/chat/chat"
+    "pages/chat/chat",
+    "pages/chat-detail/chat-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",

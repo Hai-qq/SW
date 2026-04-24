@@ -18,9 +18,10 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   position: fixed;
   top: 0;
   z-index: 50;
-  background: rgba(245,243,237,0.88);
-  backdrop-filter: blur(20px);
+  background: rgba(248,241,228,0.96);
+  backdrop-filter: blur(10px);
   box-sizing: border-box;
+  box-shadow: 0 20rpx 40rpx 12rpx rgba(248,241,228,0.95);
 }
 .header-inner {
   display: flex;
@@ -46,24 +47,34 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
 }
 
 .main-content {
-  padding-top: 180rpx;
-  padding-bottom: 240rpx;
+  padding-top: 200rpx; /* fallback，实际由 JS 动态注入 inline style */
+  padding-bottom: 300rpx;
   padding-left: 40rpx;
   padding-right: 40rpx;
 }
 
 /* Profile Header */
-.profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 48rpx; }
-.big-avatar-wrap { position: relative; width: 220rpx; height: 220rpx; margin-bottom: 32rpx; }
-.big-avatar { width: 100%; height: 100%; border-radius: 50%; border: 6rpx solid #FFF; box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.08); }
+.profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 40rpx; }
+.big-avatar-wrap { position: relative; width: 240rpx; height: 240rpx; margin-bottom: 24rpx; }
+/* clip 层：保证 image 被精确裁剪为纯圆，border/shadow 都放这里 */
+.big-avatar-clip {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 6rpx solid #FFF;
+  box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.08);
+  box-sizing: border-box;
+}
+.big-avatar { width: 100%; height: 100%; display: block; }
 .avatar-ring {
   position: absolute;
   inset: -8rpx;
   border-radius: 50%;
   border: 2rpx solid rgba(196,184,156,0.5);
 }
-.user-name { font-family: 'Noto Serif', serif; font-size: 52rpx; font-weight: bold; letter-spacing: -1rpx; margin-bottom: 20rpx; }
-.badges { display: flex; gap: 16rpx; margin-bottom: 28rpx; }
+.user-name { font-family: 'Noto Serif', serif; font-size: 52rpx; font-weight: bold; letter-spacing: -1rpx; margin-bottom: 16rpx; }
+.badges { display: flex; gap: 16rpx; margin-bottom: 20rpx; }
 .badge { padding: 10rpx 28rpx; border-radius: 40rpx; font-size: 20rpx; font-weight: bold; letter-spacing: 3rpx; }
 .white-badge { background: #FFF; border: 1.5rpx solid rgba(0,0,0,0.06); color: #1A1A1A; }
 .black-badge { background: #1A1A1A; color: #FFF; }
@@ -313,3 +324,285 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
 .active-icon { opacity: 1; }
 .nav-text { font-size: 20rpx; font-weight: bold; letter-spacing: 1rpx; color: rgba(24,24,24,0.55); }
 .nav-item.active .nav-text { color: #1A1A1A; }
+
+/* ====== 头像编辑 badge ====== */
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 6rpx;
+  right: 6rpx;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: rgba(26,26,26,0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #F8F1E4;
+  z-index: 2;
+}
+.avatar-edit-icon {
+  font-size: 22rpx;
+  color: #FFF;
+  line-height: 1;
+}
+
+/* ====== 新增：付费会员卡 ====== */
+.member-card {
+  background: linear-gradient(145deg, #1A1A1A 0%, #2C2A24 100%);
+  border-radius: 36rpx;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.14);
+  border: 1rpx solid rgba(255,255,255,0.06);
+}
+.member-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+}
+.member-badge {
+  border-radius: 999rpx;
+  padding: 10rpx 28rpx;
+}
+.member-badge-gold {
+  background: linear-gradient(90deg, #D4AF37 0%, #F5D76E 100%);
+}
+.member-badge-plain {
+  background: rgba(255,255,255,0.10);
+  border: 1rpx solid rgba(255,255,255,0.15);
+}
+.member-badge-text {
+  font-size: 22rpx;
+  font-weight: bold;
+  letter-spacing: 1rpx;
+  color: #1A1A1A;
+}
+.member-badge-plain .member-badge-text { color: rgba(255,255,255,0.65); }
+.member-sub-hint {
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.5rpx;
+}
+
+/* 权益三列 */
+.member-perks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 40rpx;
+}
+.member-perk-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+.member-perk-icon {
+  font-size: 36rpx;
+  line-height: 1;
+  color: #F5D76E;
+}
+.member-perk-label {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 1rpx;
+}
+.member-perk-sub {
+  font-size: 18rpx;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.5rpx;
+}
+
+/* 定价行 */
+.member-purchase-area { display: flex; flex-direction: column; gap: 24rpx; }
+.member-price-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+}
+.member-price-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+.member-price-label {
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1rpx;
+}
+.member-price-val {
+  font-family: 'Noto Serif', serif;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #F5D76E;
+}
+.member-price-divider {
+  width: 1rpx;
+  height: 48rpx;
+  background: rgba(255,255,255,0.08);
+}
+.member-open-btn {
+  height: 88rpx;
+  background: linear-gradient(90deg, #D4AF37 0%, #F5D76E 100%);
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.member-open-text {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #1A1A1A;
+  letter-spacing: 2rpx;
+}
+
+/* ====== 新增：编辑资料弹窗 ====== */
+.edit-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  backdrop-filter: blur(8px);
+}
+.edit-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  background: #F8F1E4;
+  border-radius: 40rpx 40rpx 0 0;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.edit-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 36rpx 40rpx 24rpx;
+  border-bottom: 1rpx solid rgba(0,0,0,0.05);
+}
+.edit-panel-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  letter-spacing: 1rpx;
+  color: #1A1A1A;
+}
+.edit-panel-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(26,26,26,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-panel-close-icon { font-size: 30rpx; color: rgba(26,26,26,0.55); }
+
+.edit-panel-scroll {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 40rpx;
+}
+.edit-field-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.05);
+  gap: 24rpx;
+}
+.edit-field-column {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+.edit-field-label {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: rgba(26,26,26,0.55);
+  letter-spacing: 1rpx;
+  width: 96rpx;
+  flex-shrink: 0;
+}
+.edit-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1A1A1A;
+  background: transparent;
+  border: none;
+  height: 52rpx;
+  padding: 0;
+}
+.edit-input-placeholder { color: rgba(26,26,26,0.3); font-size: 28rpx; }
+.edit-textarea {
+  width: 100%;
+  font-size: 28rpx;
+  color: #1A1A1A;
+  background: rgba(255,255,255,0.6);
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+  box-sizing: border-box;
+  min-height: 120rpx;
+  line-height: 1.6;
+}
+.edit-chip-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12rpx;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.edit-chip {
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  background: rgba(196,184,156,0.18);
+  border: 1.5rpx solid transparent;
+}
+.edit-chip.active { background: #1A1A1A; }
+.edit-chip-text { font-size: 24rpx; font-weight: bold; color: rgba(26,26,26,0.6); }
+.edit-chip.active .edit-chip-text { color: #FFFFFF; }
+.edit-avatar-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.edit-avatar-preview {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  border: 3rpx solid rgba(0,0,0,0.08);
+}
+.edit-avatar-hint {
+  font-size: 22rpx;
+  color: rgba(26,26,26,0.4);
+  letter-spacing: 0.5rpx;
+}
+
+.edit-save-btn {
+  margin: 20rpx 40rpx 40rpx;
+  height: 96rpx;
+  background: #1A1A1A;
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.edit-save-text {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  letter-spacing: 3rpx;
+}

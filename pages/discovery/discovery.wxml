@@ -4,9 +4,8 @@
 
   <!-- 顶部固定头部 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
-    <view class="header-inner">
+    <view class="header-inner" style="margin-top: {{headerInnerMT}}px; height: {{headerInnerH}}px;">
       <text class="logo-text">冲浪</text>
-      <image class="avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxue1HnWTmY9jhMYkirM5bzPkGnNkeHG0Tk0XJF0yk5bF22dKPOBEwIrjYcOilieqt4WTL1683L0zErSr46zkUZNQOvn4m1tArSXRiUmG5ZPHtOwDpu8y8HABb22FcWnmeMrRBLXSjxA1Tcjv9EO8tN-IYr3DKO7BMTtAqmPdqXSxY_WXT8IZ2wXbLWi-UONpe5lanH5rggS57wrj7b9e2gEl7qOvUMzH6mlmCIwxFjXYFnvlth_I1kpC3xd_wpbKkH1COulhagGM"></image>
     </view>
     <!-- 三个子 Tab -->
     <view class="sub-tabs">
@@ -62,15 +61,24 @@
         <!-- 题目内容 -->
         <text class="hot-content">"{{item.content}}"</text>
 
-        <!-- 数据条 -->
+        <!-- 数据条：双行多色进度条 -->
         <view class="hot-stats-row">
-          <view class="hot-progress-wrap">
-            <view class="hot-progress-bg">
-              <view class="hot-progress-fill" style="width: {{item.agreePercent}}%;"></view>
+          <view class="hot-dual-progress">
+            <!-- 选项 A -->
+            <view class="hot-dual-row">
+              <text class="hot-dual-label">选项 A</text>
+              <view class="hot-dual-bar-bg">
+                <view class="hot-dual-bar-fill agree-fill" style="width: {{item.agreePercent}}%;"></view>
+              </view>
+              <text class="hot-dual-pct">{{item.agreePercent}}%</text>
             </view>
-            <view class="hot-progress-labels">
-              <text class="hot-label-left">认同 {{item.agreePercent}}%</text>
-              <text class="hot-label-right">不认同 {{100 - item.agreePercent}}%</text>
+            <!-- 选项 B -->
+            <view class="hot-dual-row">
+              <text class="hot-dual-label">选项 B</text>
+              <view class="hot-dual-bar-bg">
+                <view class="hot-dual-bar-fill disagree-fill" style="width: {{100 - item.agreePercent}}%;"></view>
+              </view>
+              <text class="hot-dual-pct">{{100 - item.agreePercent}}%</text>
             </view>
           </view>
         </view>

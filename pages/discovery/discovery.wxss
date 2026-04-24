@@ -24,7 +24,7 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16rpx 40rpx 8rpx;
+  padding: 0 40rpx;
 }
 .logo-text {
   font-family: 'Noto Serif', serif;
@@ -417,3 +417,53 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
 .active-icon { opacity: 1; }
 .nav-text { font-size: 20rpx; font-weight: bold; letter-spacing: 1rpx; color: rgba(24,24,24,0.55); }
 .nav-item.active .nav-text { color: #1A1A1A; }
+
+/* ====== 新增：热议双行进度条 ====== */
+.hot-dual-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  width: 100%;
+  margin-top: 8rpx;
+}
+.hot-dual-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+}
+.hot-dual-label {
+  font-size: 20rpx;
+  font-weight: bold;
+  color: rgba(26,26,26,0.45);
+  letter-spacing: 1rpx;
+  width: 72rpx;
+  flex-shrink: 0;
+}
+.hot-dual-bar-bg {
+  flex: 1;
+  height: 10rpx;
+  background: rgba(0,0,0,0.06);
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+.hot-dual-bar-fill {
+  height: 100%;
+  border-radius: 10rpx;
+  transition: width 0.4s ease;
+}
+.agree-fill {
+  background: #1A1A1A;
+}
+.disagree-fill {
+  background: rgba(26,26,26,0.28);
+}
+.hot-dual-pct {
+  font-size: 22rpx;
+  font-weight: bold;
+  color: rgba(26,26,26,0.55);
+  letter-spacing: 0.5rpx;
+  width: 64rpx;
+  text-align: right;
+  flex-shrink: 0;
+}

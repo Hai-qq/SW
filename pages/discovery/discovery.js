@@ -172,7 +172,7 @@ const SQUARE_LIST = [
     id: "s1",
     virtualAvatar: "🦅",
     nickname: "鹰眼少年",
-    category: "生活",
+    category: "城市",
     caption: "今天的云像棉花糖，拍了二十张只有这张最好看",
     bgColor: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
     likeCount: 312,
@@ -181,7 +181,7 @@ const SQUARE_LIST = [
     id: "s2",
     virtualAvatar: "🐆",
     nickname: "豹纹女孩",
-    category: "颜值",
+    category: "表达",
     caption: "新买的裙子，在公司被夸了三次今天很开心",
     bgColor: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
     likeCount: 576,
@@ -190,7 +190,7 @@ const SQUARE_LIST = [
     id: "s3",
     virtualAvatar: "🦁",
     nickname: "狮子座的人",
-    category: "财富",
+    category: "兴趣",
     caption: "副业第一个月，多赚了3000。分享一下我的方法",
     bgColor: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)",
     likeCount: 891,
@@ -199,7 +199,7 @@ const SQUARE_LIST = [
     id: "s4",
     virtualAvatar: "🐺",
     nickname: "独行狼",
-    category: "身材",
+    category: "兴趣",
     caption: "健身第180天，终于看到了马甲线的轮廓",
     bgColor: "linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)",
     likeCount: 443,
@@ -210,19 +210,26 @@ Page({
   data: {
     statusBarHeight: 20,
     windowHeight: 800,
+    headerInnerMT: 0,
+    headerInnerH: 32,
     currentSubTab: "hot",
     hotList: HOT_LIST,
     caveList: CAVE_LIST,
     squareList: SQUARE_LIST,
-    squareFilters: ["全部", "颜值", "身材", "生活", "财富"],
+    squareFilters: ["全部", "表达", "兴趣", "城市"],
     currentSquareFilter: "全部",
   },
 
   onLoad() {
     const windowInfo = wx.getWindowInfo();
+    const menuBtn = wx.getMenuButtonBoundingClientRect();
+    const headerInnerMT = menuBtn.top - (windowInfo.statusBarHeight || 44);
+    const headerInnerH = menuBtn.height;
     this.setData({
       statusBarHeight: windowInfo.statusBarHeight || 44,
       windowHeight: windowInfo.windowHeight,
+      headerInnerMT,
+      headerInnerH,
     });
   },
 

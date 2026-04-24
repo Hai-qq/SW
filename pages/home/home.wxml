@@ -6,9 +6,10 @@
   <!-- 顶部导航区 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
     <view class="header-content" style="margin-top: {{headerContentMT}}px; height: {{menuTriggerH}}px;">
-      <view class="registered-users" bindtap="goToProfile">
-        <view class="online-dot"></view>
-        <text>32,419 位同频者已加入</text>
+      <!-- 我的档案胶囊按钮 -->
+      <view class="profile-capsule-btn" bindtap="goToProfile">
+        <text class="profile-capsule-text">我的档案</text>
+        <text class="profile-capsule-arrow">→</text>
       </view>
     </view>
   </view>
@@ -22,43 +23,69 @@
     <text class="psych-test-label">测一测</text>
   </view>
 
-  <!-- 功能菜单按钮: fixed 定位，紧贴胶囊左侧 -->
+  <!-- 功能菜单按钮: fixed 定位，紧贴胶囊左侧（沙漏图标） -->
   <view
     class="menu-trigger"
     style="right: {{menuTriggerRight}}px; top: {{menuTriggerTop}}px; height: {{menuTriggerH}}px;"
     bindtap="toggleMenuPanel">
-    <view class="menu-dot-row">
-      <view class="menu-dot"></view>
-      <view class="menu-dot"></view>
-      <view class="menu-dot"></view>
-    </view>
+    <image src="/assets/icons/hourglass.svg" class="menu-hourglass-svg" mode="aspectFit"></image>
   </view>
 
   <!-- 菜单面板遮罩 -->
   <view class="menu-mask" wx:if="{{showMenuPanel}}" catchtap="closeMenuPanel"></view>
 
-  <!-- 菜单面板 -->
+  <!-- 菜单面板：匹配筛选 -->
   <view class="menu-panel" wx:if="{{showMenuPanel}}" style="top: calc({{statusBarHeight}}px + 88rpx);">
-    <text class="menu-panel-label">话题筛选</text>
-    <view class="menu-categories">
-      <view
-        class="menu-cat-chip {{currentTab === item ? 'active' : ''}}"
-        wx:for="{{tabs}}"
-        wx:key="index"
-        data-tab="{{item}}"
-        bindtap="selectCategory">
-        <text class="menu-cat-text">{{item}}</text>
+    <text class="menu-panel-label">匹配筛选</text>
+
+    <!-- 城市（多选） -->
+    <view class="filter-group">
+      <text class="filter-group-title">城市</text>
+      <view class="filter-chips">
+        <view
+          wx:for="{{cityOptions}}"
+          wx:key="index"
+          class="filter-chip {{matchFilter.city.indexOf(item) !== -1 ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="toggleCityFilter">
+          <text class="filter-chip-text">{{item}}</text>
+        </view>
       </view>
     </view>
-    <view class="menu-divider"></view>
-    <view class="menu-profile-row" bindtap="goToProfile">
-      <text class="menu-profile-text">我的档案</text>
-      <text class="menu-profile-arrow">→</text>
+
+    <!-- 性别（单选） -->
+    <view class="filter-group">
+      <text class="filter-group-title">性别</text>
+      <view class="filter-chips">
+        <view
+          wx:for="{{genderOptions}}"
+          wx:key="index"
+          class="filter-chip {{matchFilter.gender === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="toggleGenderFilter">
+          <text class="filter-chip-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 年龄段（单选） -->
+    <view class="filter-group">
+      <text class="filter-group-title">年龄段</text>
+      <view class="filter-chips">
+        <view
+          wx:for="{{ageRangeOptions}}"
+          wx:key="index"
+          class="filter-chip {{matchFilter.ageRange === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="toggleAgeFilter">
+          <text class="filter-chip-text">{{item}}</text>
+        </view>
+      </view>
     </view>
   </view>
 
   <scroll-view scroll-y="true" enable-flex class="main-content">
-    
+
     <!-- 顶部横向好友墙/同频人列表 -->
     <scroll-view scroll-x="true" class="stories-list" show-scrollbar="false">
       <!-- 个人入口 -->
@@ -80,30 +107,30 @@
     </scroll-view>
 
     <!-- 核心卡片容器 -->
-    <view class="card-wrapper">
+    <view class="card-wrapper {{isCardMoving || isCardExiting ? 'is-clearing' : ''}}">
       <view class="card-stack-layer back-one"></view>
       <view class="card-stack-layer back-two"></view>
-      <view class="card-preview" style="transform: translateY(30rpx) scale({{previewScale}});">
-        <view class="card-preview-body">
-          <text class="card-preview-text">"{{nextCard.content}}"</text>
-        </view>
+      <view class="card-preview {{isCardExiting ? 'is-exiting' : ''}}" style="transform: translateY(30rpx) scale({{previewScale}});">
+        <view class="card-preview-body"></view>
       </view>
-      <view 
-        class="card-inner" 
-        style="transform: translateX({{cardTranslateX}}px) translateY({{cardTranslateY}}px) rotate({{cardRotate}}deg); transition: {{cardTransition}};"
+      <view
+        class="card-inner"
+        style="transform: translateX({{cardTranslateX}}px) translateY({{cardTranslateY}}px) rotate({{cardRotate}}deg); transition: {{cardTransition}}; opacity: {{cardOpacity}};"
         catchtouchstart="touchStart"
         catchtouchmove="touchMove"
         catchtouchend="touchEnd">
-        
-        <!-- 卡片顶部: 标签 + 分享按钮 -->
+
+        <!-- 卡片顶部: 分享(左) + 减少推荐(右) -->
         <view class="card-top-row">
-          <view class="card-tags">
-            <view class="card-tag" wx:for="{{currentCard.tags}}" wx:key="index">
-              <text class="card-tag-text">{{item}}</text>
-            </view>
-          </view>
           <view class="share-trigger" bindtap="handleShare">
             <text class="share-trigger-icon">↗</text>
+          </view>
+          <view
+            class="reduce-trigger"
+            catchtouchstart="stopCardTouch"
+            catchtouchmove="stopCardTouch"
+            catchtouchend="reduceSimilarTopics">
+            <text class="reduce-trigger-icon">×</text>
           </view>
         </view>
 
@@ -112,56 +139,35 @@
           <text class="opinion-text">"{{currentCard.content}}"</text>
         </view>
 
-        <!-- 卡片选项: 左认同 / 右不认同 -->
+        <!-- 卡片选项: 左认同 / 右不认同（高度约占卡片1/4） -->
         <view class="card-options">
           <view class="card-option-left" bindtap="forceSwipeRight">
             <text class="option-arrow-left">←</text>
-            <text class="option-label-text">认同</text>
+            <text class="option-label-text agree-text">认同</text>
           </view>
           <view class="card-option-divider"></view>
           <view class="card-option-right" bindtap="forceSwipeLeft">
-            <text class="option-label-text">不认同</text>
+            <text class="option-label-text disagree-text">不认同</text>
             <text class="option-arrow-right">→</text>
           </view>
         </view>
 
-        <!-- 卡片底部: 同频数据条 -->
+        <!-- 卡片底部: 进度条 + 通栏评论入口 -->
         <view class="card-footer">
-          <view class="progress-bar-container">
-            <view class="progress-bar-bg">
-              <view class="progress-bar-fill" style="width: {{currentCard.agreePercent}}%;"></view>
+          <!-- 通栏评论入口 -->
+          <view class="comment-bar" bindtap="openCommentPanel">
+            <view class="comment-bar-icon-wrap">
+              <image src="/assets/icons/forum.svg" class="comment-bar-icon" mode="aspectFit"></image>
             </view>
-            <view class="avatars-agree" style="left: 0;">
-              <image wx:for="{{currentCard.agreeAvatars}}" wx:key="index" src="{{item}}" class="tiny-avatar"></image>
-            </view>
-            <view class="avatars-disagree" style="right: 0;">
-              <image src="{{currentCard.disagreeAvatar}}" class="tiny-avatar single"></image>
-            </view>
+            <text class="comment-bar-placeholder">说说你的想法…</text>
           </view>
-
-          <view class="card-actions">
-            <view class="card-action-pill" bindtap="openCommentPanel">
-              <view class="card-action-icon-wrap">
-                <image src="/assets/icons/forum.svg" class="card-action-icon" mode="aspectFit"></image>
-              </view>
-              <text class="card-action-text">评论</text>
-            </view>
-
-            <view class="card-action-pill" bindtap="reduceSimilarTopics">
-              <view class="card-action-icon-wrap">
-                <image src="/assets/icons/close.svg" class="card-action-icon small" mode="aspectFit"></image>
-              </view>
-              <text class="card-action-text">减少此类推荐</text>
-            </view>
-          </view>
-
         </view>
+
       </view>
     </view>
 
-    <!-- 底部划动动作按钮 -->
+    <!-- 底部划动动作按钮（隐藏，保留结构） -->
     <view class="action-buttons-wrapper">
-      <!-- 评论入口 -->
       <view class="action-col" bindtap="openCommentPanel">
         <view class="circle-btn">
           <image src="/assets/icons/forum.svg" style="width: 34rpx; height: 34rpx; opacity: 0.72;"></image>
@@ -171,8 +177,6 @@
           <text class="action-main">评论</text>
         </view>
       </view>
-      
-      <!-- 中部 AI 通话 -->
       <view class="center-actions">
         <view class="voice-btn" bindtap="handleVoiceInput">
           <image src="/assets/icons/mic.svg" style="width: 34rpx; height: 34rpx; opacity: 0.8; filter: brightness(0.1);"></image>
@@ -182,8 +186,6 @@
           <text class="action-main">连线智能</text>
         </view>
       </view>
-
-      <!-- 降低同类话题 -->
       <view class="action-col" bindtap="reduceSimilarTopics">
         <view class="circle-btn">
           <image src="/assets/icons/close.svg" style="width: 30rpx; height: 30rpx; opacity: 0.72;"></image>
@@ -195,7 +197,7 @@
         </view>
       </view>
     </view>
-    
+
   </scroll-view>
 
   <!-- 底部毛玻璃导航条 (三段式) -->
@@ -219,36 +221,79 @@
     </view>
   </view>
 
-  <!-- 匹配对象仪式感弹窗：类似游戏限量皮肤出现 -->
+  <!-- 匹配对象仪式感弹窗 -->
   <view class="match-reveal-mask" wx:if="{{showMatchCard}}" catchtouchmove="preventTouchMove" bindtap="closeMatchCard">
     <view class="match-reveal-box" catchtap="preventTouchMove">
-      <view class="match-reveal-glow"></view>
-      <view class="match-reveal-badge">
-        <text class="match-reveal-badge-text">今日同频匹配</text>
-      </view>
-      <view class="match-reveal-avatar-wrap">
-        <image class="match-reveal-avatar" src="{{currentMatch.avatar}}" mode="aspectFill"></image>
-        <view class="match-reveal-ring"></view>
-      </view>
-      <text class="match-reveal-name">{{currentMatch.name}}</text>
-      <view class="match-reveal-score-row">
-        <text class="match-reveal-score-label">三观契合度</text>
-        <text class="match-reveal-score">{{currentMatch.matchScore}}%</text>
-      </view>
-      <view class="match-reveal-tags">
-        <view class="match-reveal-tag" wx:for="{{currentMatch.tags}}" wx:key="index">
-          <text class="match-reveal-tag-text">{{item}}</text>
+      <view class="match-reveal-bg-grid"></view>
+
+      <view class="match-reveal-head">
+        <text class="match-reveal-kicker">✦ 同频 SW</text>
+        <text class="match-reveal-title">同频匹配成功！</text>
+        <view class="match-reveal-subline">
+          <text class="match-reveal-sub-mark">✣</text>
+          <text class="match-reveal-sub">发现 {{currentMatch.matchScore}}% 频率共鸣</text>
+          <text class="match-reveal-sub-mark">✣</text>
         </view>
       </view>
-      <view class="match-reveal-hint">
-        <text class="match-reveal-hint-text">每日越晚遇见，越精准</text>
+
+      <view class="match-profile-card">
+        <view class="match-photo-wrap">
+          <image wx:if="{{currentMatch.photoUrl}}" class="match-photo" src="{{currentMatch.photoUrl}}" mode="aspectFill"></image>
+          <view wx:else class="match-photo-word-cloud">
+            <view class="match-word-cloud-field">
+              <view
+                wx:for="{{currentMatch.wordCloud}}"
+                wx:key="id"
+                class="match-cloud-word"
+                style="font-size: {{item.size}}rpx; opacity: {{item.opacity}}; left: {{item.left}}%; top: {{item.top}}%; transform: rotate({{item.rotate}}deg); color: {{item.color}};">
+                <text>{{item.word}}</text>
+              </view>
+              <view class="match-word-cloud-center">
+                <text class="match-word-cloud-center-main">三观</text>
+                <text class="match-word-cloud-center-sub">词云</text>
+              </view>
+            </view>
+          </view>
+          <view class="match-score-pill">
+            <text class="match-score-flash">↯</text>
+            <text class="match-score-pill-text">高度同频</text>
+          </view>
+        </view>
+
+        <view class="match-profile-info">
+          <view class="match-wx-avatar-row">
+            <image class="match-wx-avatar" src="{{currentMatch.wxAvatar}}" mode="aspectFill"></image>
+          </view>
+
+          <view class="match-name-row">
+            <view class="match-name-block">
+              <text class="match-reveal-name">{{currentMatch.name}}, {{currentMatch.age}}</text>
+              <text class="match-location">⌖ {{currentMatch.city}}</text>
+            </view>
+            <view class="match-mbti-pill">
+              <text class="match-mbti-text">{{currentMatch.mbti}}</text>
+            </view>
+          </view>
+
+          <view class="match-reveal-tags">
+            <view class="match-reveal-tag" wx:for="{{currentMatch.tags}}" wx:key="index">
+              <text class="match-reveal-tag-text"># {{item}}</text>
+            </view>
+          </view>
+
+          <view class="match-signature-card">
+            <text class="match-signature-text">"{{currentMatch.signature}}"</text>
+          </view>
+        </view>
       </view>
+
       <view class="match-reveal-actions">
-        <view class="match-btn-secondary" bindtap="closeMatchCard">
-          <text class="match-btn-text-secondary">稍后再看</text>
-        </view>
         <view class="match-btn-primary" bindtap="closeMatchCard">
-          <text class="match-btn-text-primary">打个招呼 →</text>
+          <text class="match-btn-icon">≡</text>
+          <text class="match-btn-text-primary">发个小纸条</text>
+        </view>
+        <view class="match-btn-secondary" bindtap="closeMatchCard">
+          <text class="match-btn-text-secondary">继续冲浪</text>
         </view>
       </view>
     </view>

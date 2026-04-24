@@ -1,6 +1,5 @@
 // pages/profile/profile.js
 
-// 词云数据：word=关键词, size=字号, opacity=透明度, left/top=位置(%), rotate=旋转, color=颜色, weight=字重
 const WORD_CLOUD_ITEMS = [
   {
     id: 1,
@@ -164,7 +163,6 @@ const TOP_KEYWORDS = [
   { id: 3, word: "自由 · 自洽", strength: 81, color: "#FFD3B6" },
 ];
 
-// 瀑布流卡片数据（模拟不规则高度）
 const BROWSE_CARDS = [
   {
     id: "b1",
@@ -222,36 +220,133 @@ const BROWSE_CARDS = [
   },
 ];
 
-// 奇数索引给左列，偶数给右列
 const LEFT_COL = BROWSE_CARDS.filter((_, i) => i % 2 === 0);
 const RIGHT_COL = BROWSE_CARDS.filter((_, i) => i % 2 !== 0);
+
+const DEFAULT_USER = {
+  avatar:
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuBt3naLQEnCWKVteeUGkKIuzOacHdDOhl8PJ7igG8HG7pVMRO-IF0FElwMYp8qwhGkIWQ8FurC1d_5V7Kh5hmXwtNl3_4C4ygR6uNysFWWXqCKgEIJOZm4d4KDhkrgHNImge1TIERx1_yakuYNKv3-OLyneSEXLzPqOE15pNSZWJ9x721kuzWtr93I26hQMKP4VcaIVKU5EKMVUZ1FZsX2OFWNUP4n5USY_LWNbUQ3yQCjvc82S0teyitLTKXgz3uoTJR4LJDg2Z-8",
+  name: "林深处的麋鹿",
+  genderAge: "♀ 24",
+  mbti: "INFJ-T",
+  desc: "在喧嚣的世界寻找同频的声音，慢热却也深邃。",
+  gender: "女",
+  age: "24",
+  city: "上海",
+};
 
 Page({
   data: {
     statusBarHeight: 20,
     windowHeight: 800,
+    mainContentPadPx: 100, // main-content 顶部留白，动态计算
+
+    // 用户信息
+    userInfo: { ...DEFAULT_USER },
+    isMember: false,
+
+    // 词云
     wordCloudItems: WORD_CLOUD_ITEMS,
     topKeywords: TOP_KEYWORDS,
     answeredCount: 48,
+
+    // 浏览记录
     currentBrowseTab: "voted",
     leftColItems: LEFT_COL,
     rightColItems: RIGHT_COL,
+
+    // 编辑面板
+    showEditPanel: false,
+    editForm: { ...DEFAULT_USER },
+    genderOptions: ["男", "女", "保密"],
   },
 
   onLoad() {
     const windowInfo = wx.getWindowInfo();
+    const menuBtn = wx.getMenuButtonBoundingClientRect();
+    // 系统胶囊左侧 + 12px 富余 = header-inner 的右边距（px）
+    // main-content 顶部留白 = 胶囊底部 + 24px 呼吸空间
+    const mainContentPadPx = menuBtn.bottom + 24;
     this.setData({
       statusBarHeight: windowInfo.statusBarHeight || 44,
       windowHeight: windowInfo.windowHeight,
+      mainContentPadPx,
     });
   },
 
+  /* ====== 编辑资料 ====== */
+  openEditProfile() {
+    // 打开面板时同步当前用户信息到 editForm
+    this.setData({
+      showEditPanel: true,
+      editForm: { ...this.data.userInfo },
+    });
+  },
+
+  closeEditPanel() {
+    this.setData({ showEditPanel: false });
+  },
+
+  chooseAvatar() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ["compressed"],
+      sourceType: ["album", "camera"],
+      success: (res) => {
+        const tempPath = res.tempFilePaths[0];
+        this.setData({
+          editForm: { ...this.data.editForm, avatar: tempPath },
+        });
+      },
+    });
+  },
+
+  onEditName(e) {
+    this.setData({ editForm: { ...this.data.editForm, name: e.detail.value } });
+  },
+
+  onEditGender(e) {
+    const val = e.currentTarget.dataset.value;
+    const age = this.data.editForm.age || this.data.userInfo.age;
+    const genderAge = `${val === "女" ? "♀" : val === "男" ? "♂" : "—"} ${age}`;
+    this.setData({
+      editForm: { ...this.data.editForm, gender: val, genderAge },
+    });
+  },
+
+  onEditAge(e) {
+    const age = e.detail.value;
+    const gender = this.data.editForm.gender || this.data.userInfo.gender;
+    const genderAge = `${gender === "女" ? "♀" : gender === "男" ? "♂" : "—"} ${age}`;
+    this.setData({ editForm: { ...this.data.editForm, age, genderAge } });
+  },
+
+  onEditCity(e) {
+    this.setData({ editForm: { ...this.data.editForm, city: e.detail.value } });
+  },
+
+  onEditDesc(e) {
+    this.setData({ editForm: { ...this.data.editForm, desc: e.detail.value } });
+  },
+
+  saveProfile() {
+    const updated = { ...this.data.editForm };
+    this.setData({ userInfo: updated, showEditPanel: false });
+    wx.showToast({ title: "保存成功", icon: "success" });
+  },
+
+  /* ====== 会员购买 ====== */
+  openMemberPurchase() {
+    wx.showToast({ title: "会员购买功能开发中", icon: "none" });
+  },
+
+  /* ====== 浏览记录 Tab ====== */
   switchBrowseTab(e) {
     const tab = e.currentTarget.dataset.tab;
     this.setData({ currentBrowseTab: tab });
-    // 实际应根据 tab 请求不同数据
   },
 
+  /* ====== 功能入口 ====== */
   openPreferences() {
     wx.showToast({ title: "偏好设定开发中", icon: "none" });
   },
@@ -264,6 +359,7 @@ Page({
     wx.showToast({ title: "账号设置开发中", icon: "none" });
   },
 
+  /* ====== 导航 ====== */
   goBack() {
     wx.navigateBack();
   },

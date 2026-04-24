@@ -1,0 +1,80 @@
+<!-- pages/chat-detail/chat-detail.wxml -->
+<view class="container">
+  <view class="bg-gradient"></view>
+
+  <!-- 顶部导航栏 -->
+  <view class="cd-header" style="padding-top: {{headerTopPadding}}px; padding-right: {{headerRightPadding}}px;">
+    <view class="cd-header-main" style="height: {{headerRowHeight}}px;">
+      <view class="cd-back-btn" bindtap="goBack">
+        <text class="cd-back-icon">←</text>
+      </view>
+      <view class="cd-peer-card">
+        <image class="cd-title-avatar" src="{{peerAvatar}}" mode="aspectFill"></image>
+        <view class="cd-title-copy">
+          <view class="cd-name-row">
+            <text class="cd-name">{{peerName}}</text>
+            <view class="cd-online-dot {{isOnline ? 'online' : ''}}"></view>
+          </view>
+          <text class="cd-context">{{peerContext}} · {{matchScore}}% 频率共鸣</text>
+        </view>
+        <view class="cd-profile-btn" bindtap="openProfile">
+          <text class="cd-profile-icon">≡</text>
+          <text class="cd-profile-label">档案</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view
+    scroll-y="true"
+    scroll-into-view="{{scrollToId}}"
+    class="cd-messages"
+    style="height: {{windowHeight}}px; padding-top: {{messagesTopPadding}}px;">
+
+    <view wx:for="{{messages}}" wx:key="id" class="cd-msg-row {{item.fromSelf ? 'self' : 'peer'}}">
+      <!-- 时间戳（每隔一段时间显示） -->
+      <view class="cd-timestamp-wrap" wx:if="{{item.showTime}}">
+        <text class="cd-timestamp">{{item.time}}</text>
+      </view>
+
+      <view class="cd-bubble-row {{item.fromSelf ? 'self-row' : 'peer-row'}}">
+        <!-- 对方头像 -->
+        <image
+          wx:if="{{!item.fromSelf}}"
+          class="cd-peer-avatar"
+          src="{{peerAvatar}}"
+          mode="aspectFill">
+        </image>
+
+        <!-- 气泡 -->
+        <view class="cd-bubble {{item.fromSelf ? 'self-bubble' : 'peer-bubble'}}" id="msg-{{item.id}}">
+          <text class="cd-bubble-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部占位，留出输入框高度 -->
+    <view style="height: 188rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部输入区（固定，随键盘上移） -->
+  <view class="cd-input-bar" style="bottom: {{keyboardHeight}}px;">
+    <view class="cd-input-shell">
+      <input
+        class="cd-input"
+        value="{{inputText}}"
+        bindinput="onInput"
+        placeholder="说点什么…"
+        placeholder-class="cd-input-placeholder"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+        adjust-position="false"
+        bindkeyboardheightchange="onKeyboardHeightChange"
+      />
+    </view>
+    <view class="cd-send-btn {{inputText ? 'active' : ''}}" bindtap="sendMessage">
+      <text class="cd-send-icon">↑</text>
+    </view>
+  </view>
+</view>

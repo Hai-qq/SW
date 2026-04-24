@@ -45,6 +45,10 @@ const MOCK_CHAT_LIST = [
 Page({
   data: {
     statusBarHeight: 20,
+    menuTriggerRight: 0,
+    menuTriggerTop: 0,
+    menuTriggerH: 32,
+    headerInnerMT: 0,
     chatList: MOCK_CHAT_LIST,
     newFriendCount: 5,
     visitorCount: 23,
@@ -52,7 +56,15 @@ Page({
 
   onLoad() {
     const info = wx.getWindowInfo();
-    this.setData({ statusBarHeight: info.statusBarHeight || 44 });
+    const menuBtn = wx.getMenuButtonBoundingClientRect();
+    const headerInnerMT = menuBtn.top - (info.statusBarHeight || 44);
+    this.setData({
+      statusBarHeight: info.statusBarHeight || 44,
+      menuTriggerRight: info.windowWidth - menuBtn.left + 8,
+      menuTriggerTop: menuBtn.top,
+      menuTriggerH: menuBtn.height,
+      headerInnerMT,
+    });
   },
 
   openNewFriends() {
@@ -65,13 +77,13 @@ Page({
 
   openChatDetail(e) {
     const { id } = e.currentTarget.dataset;
-    // 打开聊天框后清除未读数
+    // 清除未读数
     const chatList = this.data.chatList.map((item) => {
       if (item.id !== id) return item;
       return { ...item, unreadCount: 0 };
     });
     this.setData({ chatList });
-    wx.showToast({ title: "聊天详情开发中", icon: "none" });
+    wx.navigateTo({ url: `/pages/chat-detail/chat-detail?id=${id}` });
   },
 
   openUserProfile(e) {

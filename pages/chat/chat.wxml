@@ -4,12 +4,15 @@
 
   <!-- 顶部标题 -->
   <view class="header">
-    <text class="page-title">小纸条</text>
-    <view class="header-right">
-      <view class="new-compose-btn" bindtap="openNewChat">
-        <text class="compose-icon">✏</text>
-      </view>
-    </view>
+    <text class="page-title" style="margin-top: {{headerInnerMT}}px; height: {{menuTriggerH}}px; display:flex; align-items:center;">小纸条</text>
+  </view>
+
+  <!-- 撰写按钮：fixed 定位，紧贴系统胶囊左侧 -->
+  <view
+    class="compose-btn-fixed"
+    style="right: {{menuTriggerRight}}px; top: {{menuTriggerTop}}px; height: {{menuTriggerH}}px;"
+    bindtap="openNewChat">
+    <image src="/assets/icons/compose.svg" class="compose-svg" mode="aspectFit"></image>
   </view>
 
   <scroll-view scroll-y="true" enable-flex class="chat-list">
@@ -17,31 +20,29 @@
     <!-- 3.3 新朋友 & 访客入口（固定在最顶部） -->
     <view class="notify-row">
       <view class="notify-card" bindtap="openNewFriends">
-        <view class="notify-icon-wrap notify-friend-bg">
-          <text class="notify-icon">👋</text>
-        </view>
-        <view class="notify-info">
+        <view class="notify-card-top">
+          <view class="notify-icon-wrap notify-friend-bg">
+            <text class="notify-icon">👋</text>
+          </view>
           <text class="notify-title">新朋友</text>
-          <text class="notify-desc">有 {{newFriendCount}} 人发来认识邀请</text>
+          <view class="notify-count-badge" wx:if="{{newFriendCount > 0}}">
+            <text class="notify-badge-text">{{newFriendCount}}</text>
+          </view>
         </view>
-        <view class="notify-badge" wx:if="{{newFriendCount > 0}}">
-          <text class="notify-badge-text">{{newFriendCount}}</text>
-        </view>
-        <text class="notify-arrow">›</text>
+        <text class="notify-desc">有 {{newFriendCount}} 人发来认识邀请</text>
       </view>
 
       <view class="notify-card" bindtap="openVisitors">
-        <view class="notify-icon-wrap notify-visitor-bg">
-          <text class="notify-icon">👁</text>
-        </view>
-        <view class="notify-info">
+        <view class="notify-card-top">
+          <view class="notify-icon-wrap notify-visitor-bg">
+            <text class="notify-icon">👁</text>
+          </view>
           <text class="notify-title">访客</text>
-          <text class="notify-desc">{{visitorCount}} 人查看了你的档案</text>
+          <view class="notify-count-badge visitor-badge" wx:if="{{visitorCount > 0}}">
+            <text class="notify-badge-text">{{visitorCount}}</text>
+          </view>
         </view>
-        <view class="notify-badge visitor-badge" wx:if="{{visitorCount > 0}}">
-          <text class="notify-badge-text">{{visitorCount}}</text>
-        </view>
-        <text class="notify-arrow">›</text>
+        <text class="notify-desc">{{visitorCount}} 人查看了你的档案</text>
       </view>
     </view>
 
@@ -58,10 +59,13 @@
       bindtap="openChatDetail"
       data-id="{{item.id}}">
 
-      <!-- 头像 -->
+      <!-- 头像（未读角标贴在头像右上角） -->
       <view class="avatar-wrap">
         <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"></image>
         <view class="online-badge" wx:if="{{item.isOnline}}"></view>
+        <view class="unread-badge" wx:if="{{item.unreadCount > 0}}">
+          <text class="unread-text">{{item.unreadCount}}</text>
+        </view>
       </view>
 
       <!-- 聊天信息 -->
@@ -74,14 +78,11 @@
       </view>
 
       <!-- 右侧三观档案入口 -->
-      <view class="chat-profile-btn" bindtap="openUserProfile" data-id="{{item.id}}" catchtap="openUserProfile" data-id="{{item.id}}">
-        <text class="chat-profile-icon">三</text>
-        <text class="chat-profile-label">档案</text>
-      </view>
-
-      <!-- 未读数 -->
-      <view class="unread-badge" wx:if="{{item.unreadCount > 0}}">
-        <text class="unread-text">{{item.unreadCount}}</text>
+      <view class="chat-profile-btn-wrap">
+        <view class="chat-profile-btn" bindtap="openUserProfile" data-id="{{item.id}}" catchtap="openUserProfile">
+          <image src="/assets/icons/person.svg" class="chat-profile-svg" mode="aspectFit"></image>
+          <text class="chat-profile-label">档案</text>
+        </view>
       </view>
     </view>
 

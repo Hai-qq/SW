@@ -10,26 +10,32 @@
         <text class="back-icon">←</text>
       </view>
       <text class="header-title">我的档案</text>
-      <view class="setting-btn">
-        <text class="setting-icon">⚙</text>
-      </view>
+      <view style="width: 72rpx;"></view>
     </view>
   </view>
 
-  <view class="main-content">
+  <view class="main-content" style="padding-top: {{mainContentPadPx}}px;">
 
     <!-- 个人信息头部 -->
     <view class="profile-header">
+      <!-- 头像（右下角编辑 icon） -->
       <view class="big-avatar-wrap">
-        <image class="big-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt3naLQEnCWKVteeUGkKIuzOacHdDOhl8PJ7igG8HG7pVMRO-IF0FElwMYp8qwhGkIWQ8FurC1d_5V7Kh5hmXwtNl3_4C4ygR6uNysFWWXqCKgEIJOZm4d4KDhkrgHNImge1TIERx1_yakuYNKv3-OLyneSEXLzPqOE15pNSZWJ9x721kuzWtr93I26hQMKP4VcaIVKU5EKMVUZ1FZsX2OFWNUP4n5USY_LWNbUQ3yQCjvc82S0teyitLTKXgz3uoTJR4LJDg2Z-8" mode="aspectFill"></image>
+        <!-- clip 层：保证图片被裁剪成纯圆 -->
+        <view class="big-avatar-clip">
+          <image class="big-avatar" src="{{userInfo.avatar}}" mode="aspectFill"></image>
+        </view>
         <view class="avatar-ring"></view>
+        <view class="avatar-edit-badge" bindtap="openEditProfile">
+          <text class="avatar-edit-icon">✎</text>
+        </view>
       </view>
-      <text class="user-name">林深处的麋鹿</text>
+
+      <text class="user-name">{{userInfo.name}}</text>
       <view class="badges">
-        <view class="badge white-badge"><text>♀ 24</text></view>
-        <view class="badge black-badge"><text>INFJ-T</text></view>
+        <view class="badge white-badge"><text>{{userInfo.genderAge}}</text></view>
+        <view class="badge black-badge"><text>{{userInfo.mbti}}</text></view>
       </view>
-      <text class="user-desc">"在喧嚣的世界寻找同频的声音，慢热却也深邃。"</text>
+      <text class="user-desc">"{{userInfo.desc}}"</text>
     </view>
 
     <!-- 数据统计 -->
@@ -55,7 +61,60 @@
       </view>
     </view>
 
-    <!-- 4.2 球状关键词词云（三观档案） -->
+    <!-- 付费会员模块（stats 下方，词云上方） -->
+    <view class="member-card">
+      <!-- 会员身份 badge -->
+      <view class="member-identity-row">
+        <view class="member-badge {{isMember ? 'member-badge-gold' : 'member-badge-plain'}}">
+          <text class="member-badge-text">{{isMember ? '✦ 三观库会员' : '普通用户'}}</text>
+        </view>
+        <text class="member-sub-hint" wx:if="{{!isMember}}">每日划卡 5 次上限</text>
+      </view>
+
+      <!-- 权益三列 -->
+      <view class="member-perks">
+        <view class="member-perk-item">
+          <text class="member-perk-icon">∞</text>
+          <text class="member-perk-label">无限划卡</text>
+          <text class="member-perk-sub">{{isMember ? '已解锁' : '5次/天'}}</text>
+        </view>
+        <view class="member-perk-item">
+          <text class="member-perk-icon">↯</text>
+          <text class="member-perk-label">优先匹配</text>
+          <text class="member-perk-sub">{{isMember ? '已解锁' : '会员专属'}}</text>
+        </view>
+        <view class="member-perk-item">
+          <text class="member-perk-icon">≋</text>
+          <text class="member-perk-label">深度报告</text>
+          <text class="member-perk-sub">{{isMember ? '已解锁' : '会员专属'}}</text>
+        </view>
+      </view>
+
+      <!-- 开通按钮 + 定价（非会员时显示） -->
+      <view wx:if="{{!isMember}}" class="member-purchase-area">
+        <view class="member-price-row">
+          <view class="member-price-item">
+            <text class="member-price-label">月卡</text>
+            <text class="member-price-val">¥18</text>
+          </view>
+          <view class="member-price-divider"></view>
+          <view class="member-price-item">
+            <text class="member-price-label">季卡</text>
+            <text class="member-price-val">¥48</text>
+          </view>
+          <view class="member-price-divider"></view>
+          <view class="member-price-item">
+            <text class="member-price-label">年卡</text>
+            <text class="member-price-val">¥128</text>
+          </view>
+        </view>
+        <view class="member-open-btn" bindtap="openMemberPurchase">
+          <text class="member-open-text">立即开通 →</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 三观词云 -->
     <view class="section">
       <view class="section-top">
         <text class="sec-title">三观词云</text>
@@ -64,7 +123,6 @@
 
       <view class="word-cloud-container">
         <view class="word-cloud-sphere">
-          <!-- 词云关键词，大小/透明度/位置模拟球面分布 -->
           <view
             wx:for="{{wordCloudItems}}"
             wx:key="id"
@@ -79,7 +137,6 @@
         </view>
       </view>
 
-      <!-- 词云图例：主要倾向 -->
       <view class="cloud-legend">
         <view class="cloud-legend-item" wx:for="{{topKeywords}}" wx:key="id">
           <view class="cloud-legend-dot" style="background: {{item.color}};"></view>
@@ -89,7 +146,7 @@
       </view>
     </view>
 
-    <!-- 4.3 浏览记录：抖音风格瀑布流 -->
+    <!-- 浏览记录 -->
     <view class="section">
       <view class="section-top">
         <text class="sec-title">浏览记录</text>
@@ -115,7 +172,6 @@
         </view>
       </view>
 
-      <!-- 瀑布流双列网格 -->
       <view class="douyin-grid">
         <view class="douyin-col">
           <view
@@ -203,4 +259,99 @@
   </view>
 
 </scroll-view>
+
+<!-- 编辑资料半屏弹窗 -->
+<view class="edit-mask" wx:if="{{showEditPanel}}" catchtap="closeEditPanel"></view>
+<view class="edit-panel" wx:if="{{showEditPanel}}">
+  <view class="edit-panel-header">
+    <text class="edit-panel-title">编辑资料</text>
+    <view class="edit-panel-close" bindtap="closeEditPanel">
+      <text class="edit-panel-close-icon">×</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y="true" class="edit-panel-scroll">
+    <!-- 头像 -->
+    <view class="edit-field-row" bindtap="chooseAvatar">
+      <text class="edit-field-label">头像</text>
+      <view class="edit-avatar-preview-wrap">
+        <image class="edit-avatar-preview" src="{{editForm.avatar}}" mode="aspectFill"></image>
+        <text class="edit-avatar-hint">点击更换</text>
+      </view>
+    </view>
+
+    <!-- 昵称 -->
+    <view class="edit-field-row">
+      <text class="edit-field-label">昵称</text>
+      <input
+        class="edit-input"
+        value="{{editForm.name}}"
+        placeholder="输入昵称"
+        placeholder-class="edit-input-placeholder"
+        bindinput="onEditName"
+      />
+    </view>
+
+    <!-- 性别 -->
+    <view class="edit-field-row">
+      <text class="edit-field-label">性别</text>
+      <view class="edit-chip-row">
+        <view
+          wx:for="{{genderOptions}}"
+          wx:key="index"
+          class="edit-chip {{editForm.gender === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="onEditGender">
+          <text class="edit-chip-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 年龄 -->
+    <view class="edit-field-row">
+      <text class="edit-field-label">年龄</text>
+      <input
+        class="edit-input"
+        value="{{editForm.age}}"
+        placeholder="输入年龄"
+        placeholder-class="edit-input-placeholder"
+        type="number"
+        bindinput="onEditAge"
+      />
+    </view>
+
+    <!-- 城市 -->
+    <view class="edit-field-row">
+      <text class="edit-field-label">城市</text>
+      <input
+        class="edit-input"
+        value="{{editForm.city}}"
+        placeholder="输入所在城市"
+        placeholder-class="edit-input-placeholder"
+        bindinput="onEditCity"
+      />
+    </view>
+
+    <!-- 个人签名 -->
+    <view class="edit-field-row edit-field-column">
+      <text class="edit-field-label">个人签名</text>
+      <textarea
+        class="edit-textarea"
+        value="{{editForm.desc}}"
+        placeholder="写点什么…"
+        placeholder-class="edit-input-placeholder"
+        bindinput="onEditDesc"
+        maxlength="60"
+        auto-height
+      />
+    </view>
+
+    <view style="height: 40rpx;"></view>
+  </scroll-view>
+
+  <view class="edit-save-btn" bindtap="saveProfile">
+    <text class="edit-save-text">保存</text>
+  </view>
+</view>
+
 </view>

@@ -19,9 +19,8 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
 
 /* Header */
 .header {
-  padding: 16rpx 40rpx 28rpx;
+  padding: 0 40rpx 48rpx;
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
 }
 .page-title {
@@ -30,22 +29,25 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   font-weight: bold;
   font-style: italic;
 }
-.header-right { display: flex; align-items: center; }
-.new-compose-btn {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: rgba(26,26,26,0.06);
+
+/* 撰写按钮：fixed 定位，紧贴系统胶囊左侧 */
+.compose-btn-fixed {
+  position: fixed;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(26,26,26,0.06);
+  border-radius: 999rpx;
+  padding: 0 20rpx;
+  box-sizing: border-box;
 }
-.compose-icon { font-size: 30rpx; color: rgba(26,26,26,0.7); }
+.compose-svg { width: 28rpx; height: 28rpx; opacity: 0.7; }
 
 /* 主列表 */
 .chat-list {
   flex: 1;
-  padding: 0 0 240rpx;
+  padding: 0 0 160rpx;
   box-sizing: border-box;
   width: 100%;
 }
@@ -57,24 +59,30 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   gap: 20rpx;
   padding: 0 40rpx 28rpx;
 }
+/* 新朋友/访客 通知卡片 — 纵向布局 */
 .notify-card {
   flex: 1;
   background: rgba(255,255,255,0.92);
   border-radius: 32rpx;
-  padding: 28rpx 24rpx;
+  padding: 24rpx 22rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  box-shadow: 0 8rpx 28rpx rgba(196,184,156,0.12);
+  border: 1.5rpx solid rgba(255,255,255,0.8);
+}
+
+/* 标题行：图标 + 名称 + badge */
+.notify-card-top {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16rpx;
-  box-shadow: 0 8rpx 28rpx rgba(196,184,156,0.12);
-  border: 1.5rpx solid rgba(255,255,255,0.8);
-  position: relative;
-  overflow: hidden;
+  gap: 14rpx;
 }
 .notify-icon-wrap {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 24rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,28 +90,18 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
 }
 .notify-friend-bg { background: rgba(82,196,26,0.12); }
 .notify-visitor-bg { background: rgba(24,144,255,0.10); }
-.notify-icon { font-size: 32rpx; }
-.notify-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
+.notify-icon { font-size: 28rpx; }
 .notify-title {
+  flex: 1;
   font-size: 26rpx;
   font-weight: bold;
   color: #1A1A1A;
   letter-spacing: 1rpx;
 }
-.notify-desc {
-  font-size: 20rpx;
-  color: rgba(26,26,26,0.45);
-  letter-spacing: 0.5rpx;
-}
-.notify-badge {
-  position: absolute;
-  top: 16rpx;
-  right: 38rpx;
+
+/* badge 内联在标题行右侧，不干扰布局 */
+.notify-count-badge {
+  flex-shrink: 0;
   min-width: 36rpx;
   height: 36rpx;
   background: #FF4D4F;
@@ -112,10 +110,22 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   align-items: center;
   justify-content: center;
   padding: 0 10rpx;
+  box-sizing: border-box;
 }
 .visitor-badge { background: #1890FF; }
-.notify-badge-text { font-size: 20rpx; font-weight: bold; color: #FFF; }
-.notify-arrow { font-size: 36rpx; color: rgba(26,26,26,0.25); margin-left: auto; }
+.notify-badge-text { font-size: 18rpx; font-weight: bold; color: #FFF; }
+
+/* 描述文字：对齐图标右侧，单行省略 */
+.notify-desc {
+  font-size: 20rpx;
+  color: rgba(26,26,26,0.45);
+  letter-spacing: 0.5rpx;
+  padding-left: 74rpx; /* icon(60) + gap(14) */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
 
 /* 分隔线 */
 .section-divider {
@@ -197,7 +207,12 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   line-height: 1.4;
 }
 
-/* 右侧三观档案按钮 */
+/* 右侧三观档案按钮 wrap（用于角标定位） */
+.chat-profile-btn-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
 .chat-profile-btn {
   display: flex;
   flex-direction: column;
@@ -207,8 +222,6 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   height: 72rpx;
   border-radius: 24rpx;
   background: rgba(196,184,156,0.18);
-  flex-shrink: 0;
-  margin-left: 16rpx;
   gap: 4rpx;
 }
 .chat-profile-icon {
@@ -217,6 +230,11 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   color: rgba(26,26,26,0.55);
   line-height: 1;
 }
+.chat-profile-svg {
+  width: 30rpx;
+  height: 30rpx;
+  opacity: 0.55;
+}
 .chat-profile-label {
   font-size: 16rpx;
   font-weight: bold;
@@ -224,21 +242,23 @@ page { color: #1A1A1A; font-family: -apple-system, sans-serif; background: trans
   letter-spacing: 0.5rpx;
 }
 
-/* 未读角标 */
+/* 未读角标：叠在头像右上角 */
 .unread-badge {
   position: absolute;
-  top: 18rpx;
-  right: 18rpx;
-  min-width: 36rpx;
-  height: 36rpx;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 32rpx;
+  height: 32rpx;
   background: #FF4D4F;
   border-radius: 999rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 10rpx;
+  padding: 0 8rpx;
+  border: 3rpx solid #F8F1E4;
+  z-index: 10;
 }
-.unread-text { font-size: 20rpx; font-weight: bold; color: #FFF; }
+.unread-text { font-size: 18rpx; font-weight: bold; color: #FFF; }
 
 /* Bottom Nav Shared */
 .bottom-nav { position: fixed; bottom: 52rpx; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
